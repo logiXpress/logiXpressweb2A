@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Your Location</title>
+</head>
+<body>
+
+<h1>Sending Your Location...</h1>
+
+<script>
+// Function to send the location data
+function sendLocation() {
+    if (navigator.geolocation) {
+        console.log("Geolocation is available!"); // Debugging line
+
+        navigator.geolocation.getCurrentPosition(function(position) {
+            console.log("Location retrieved:", position);
+
+            // Get latitude and longitude from position
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            // Prepare the data to send
+            const data = {
+                id_livreur: 247,  // Your dynamic ID
+                latitude: latitude,
+                longitude: longitude
+            };
+
+            // Log data before sending to check structure
+            console.log("Sending data:", data);
+
+            // Send the data to the server using fetch
+            fetch('https://316c-197-21-135-139.ngrok-free.app/Project/View/Front_Office/api/UpdateLivreurLocation.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json()) // Assume server returns JSON
+            .then(data => {
+                console.log("Success:", data);  // Handle the JSON response
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert('Failed to send location!');
+            });
+
+        }, function(error) {
+            console.error("Geolocation error:", error);
+            alert('Error getting location!');
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+// Send location every 5 seconds (5000 milliseconds)
+setInterval(sendLocation, 5000);
+</script>
+
+</body>
+</html>
