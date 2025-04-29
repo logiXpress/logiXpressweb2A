@@ -1,6 +1,6 @@
 <?php
-require_once '../Controller/UtilisateurC.php';
-require_once '../Model/Utilisateur.php';
+require_once '../../../Controller/UtilisateurC.php';
+require_once '../../../Model/Utilisateur.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nom = htmlspecialchars($_POST['nom']);
@@ -9,7 +9,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $motDePasse = $_POST['motDePasse'];
     $type = $_POST['type'];
 
-    $utilisateur = new Utilisateur($nom, $prenom, $email, $motDePasse, $type);
+    // Traitement de l'image
+    $profilePicture = null;
+    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] == 0) {
+        $profilePicture = file_get_contents($_FILES['profile_picture']['tmp_name']);
+    }
+
+    // Créer l'objet Utilisateur en incluant l'image
+    $utilisateur = new Utilisateur($nom, $prenom, $email, $motDePasse, $type, $profilePicture);
+
     $uc = new UtilisateurC();
     $uc->ajouterUtilisateur($utilisateur);
 
@@ -19,3 +27,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "Requête invalide.";
 }
 ?>
+

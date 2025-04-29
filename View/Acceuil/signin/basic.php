@@ -1,183 +1,239 @@
-<!-- Ajout avant le formulaire -->
 <?php
+session_start();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  require_once '../../../config/config.php'; // Chemin vers config.php
+    require_once '../../../config/config.php';
 
-  try {
-    // Obtenez la connexion PDO
-    $pdo = config::getConnexion();
+    try {
+        $pdo = config::getConnexion();
+        $id_utilisateur = trim($_POST['id_utilisateur'] ?? '');
+        $password = trim($_POST['password'] ?? '');
+        $recaptcha_response = $_POST['g-recaptcha-response'] ?? '';
 
-    // Récupérez les données du formulaire
-    $id_utilisateur = isset($_POST['id_utilisateur']) ? $_POST['id_utilisateur'] : null;
-    $password = isset($_POST['password']) ? $_POST['password'] : null;
+        if (!empty($id_utilisateur) && !empty($password) && !empty($recaptcha_response)) {
+            $secret_key = '6Lcq3SQrAAAAAG6PGHpnztnDT-XJynfhz9-PagUH';
+            $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secret_key&response=$recaptcha_response");
+            $response_keys = json_decode($response, true);
 
-    if ($id_utilisateur && $password) {
-      // Préparez et exécutez la requête
-      $stmt = $pdo->prepare("SELECT Type FROM utilisateurs WHERE id_utilisateur = :id_utilisateur AND Mot_de_passe = :password");
-      $stmt->execute([
-        ':id_utilisateur' => $id_utilisateur,
-        ':password' => $password
-      ]);
+            if (intval($response_keys["success"]) === 1) {
+                $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE id_utilisateur = :id_utilisateur");
+                $stmt->execute([':id_utilisateur' => $id_utilisateur]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-      $row = $stmt->fetch();
+                if ($user && $user['Mot_de_passe'] === $password) {
+                    $_SESSION['user'] = $user;
+                    $_SESSION['id_utilisateur'] = $user['id_utilisateur'];
 
-      if ($row) {
-        if ($row['Type'] === 'Admin') {
-          header("Location: /Project/View/Back_Office/index.html");
-
-          exit();
-        } elseif ($row['Type'] === 'Client') {
-          header("Location: /Project/View/Front_Office/index.html");
-
-          exit();
+                    if ($user['Type'] === 'Admin') {
+                        header("Location: /Project/View/Back_Office/livraison/dashboard.php");
+                        exit();
+                    } elseif ($user['Type'] === 'Client') {
+                        header("Location: /Project/View/Acceuil/clientpage.php");
+                        exit();
+                    }
+                } else {
+                    $error_message = "ID utilisateur ou mot de passe incorrect.";
+                }
+            } else {
+                $error_message = "La vérification reCAPTCHA a échoué. Veuillez réessayer.";
+            }
+        } else {
+            $error_message = "Veuillez remplir tous les champs et valider le reCAPTCHA.";
         }
-      } else {
-        $error_message = "ID utilisateur ou mot de passe incorrect.";
-      }
-    } else {
-      $error_message = "Veuillez remplir tous les champs.";
+    } catch (Exception $e) {
+        die('Erreur : ' . $e->getMessage());
     }
-  } catch (Exception $e) {
-    die('Erreur : ' . $e->getMessage());
-  }
 }
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .login-container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            background-image: url('/Project/logixpress.sign.in.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding-left: 50px;
+        }
+        .login-form {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+        }
+        .login-form h4 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+        }
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            position: absolute;
+            bottom: -18px;
+            left: 0;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 0;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .social-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .social-buttons a {
+            margin: 0 10px;
+            color: #fff;
+            font-size: 20px;
+            text-decoration: none;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #fff;
+            font-size: 14px;
+        }
+        .footer a {
+            color: #f1f1f1;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            color: #fff;
+        }
+    </style>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-form">
+            <h4>Connexion</h4>
 
-
-<?php require_once '../../Front_Office/includes/header.php'; ?>
-
-<body class="bg-gray-200"><!-- Extra details for Live View on GitHub Pages --><!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NKDMSK6" height="0" width="0"
-      style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
-  <main class="main-content  mt-0">
-    <div class="page-header align-items-start min-vh-100"
-      style="background-image: url('https://images.unsplash.com/photo-1497294815431-9365093b7331?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1950&amp;q=80');">
-      <span class="mask bg-gradient-dark opacity-6"></span>
-      <div class="container my-auto">
-        <div class="row">
-          <div class="col-lg-4 col-md-8 col-12 mx-auto">
-            <div class="card z-index-0 fadeIn3 fadeInBottom">
-              <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
-                  <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">Sign in</h4>
-                  <div class="row mt-3">
-                    <div class="col-2 text-center ms-auto">
-                      <a class="btn btn-link px-3" href="javascript:;">
-                        <i class="fa fa-facebook text-white text-lg"></i>
-                      </a>
-                    </div>
-                    <div class="col-2 text-center px-1">
-                      <a class="btn btn-link px-3" href="javascript:;">
-                        <i class="fa fa-github text-white text-lg"></i>
-                      </a>
-                    </div>
-                    <div class="col-2 text-center me-auto">
-                      <a class="btn btn-link px-3" href="javascript:;">
-                        <i class="fa fa-google text-white text-lg"></i>
-                      </a>
-                    </div>
-                  </div>
+            <?php if (!empty($error_message)): ?>
+                <div style="background-color: #f44336; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 20px;">
+                    <?php echo htmlspecialchars($error_message); ?>
                 </div>
-              </div>
-              <div class="card-body">
-                <?php if (!empty($error_message)): ?>
-                  <div class="alert alert-danger text-center">
-                    <?php echo $error_message; ?>
-                  </div>
-                <?php endif; ?>
-                <form role="form" class="text-start" method="POST" action="">
-                  <!-- Remplacement -->
-                  <label class="form-label">ID Utilisateur</label>
+            <?php endif; ?>
 
-                  <div class="input-group input-group-outline my-3">
-                    <input type="text" name="id_utilisateur" class="form-control">
-                  </div>
-                  <label class="form-label">Mot de passe</label>
+            <form id="login-form" method="POST" action="">
+                <div class="input-group">
+                    <label for="id_utilisateur">ID Utilisateur</label>
+                    <input type="text" name="id_utilisateur" id="id_utilisateur">
+                    <div id="id-error" class="error-message"></div>
+                </div>
 
-                  <div class="input-group input-group-outline mb-3">
-                    <input type="password" name="password" class="form-control" required>
-                  </div>
-                  <div class="form-check form-switch d-flex align-items-center mb-3">
-                    <input class="form-check-input" type="checkbox" id="rememberMe" checked>
-                    <label class="form-check-label mb-0 ms-3" for="rememberMe">Remember me</label>
-                  </div>
-                  <div class="text-center">
-                    <button type="submit" class="btn bg-gradient-dark w-100 my-4 mb-2">Sign in</button>
-                  </div>
-                  <p class="mt-4 text-sm text-center">
-                    Don't have an account?
-                    <a href="../signup/signup.php" class="text-primary text-gradient font-weight-bold">Sign
-                      up</a>
-                  </p>
-                </form>
-              </div>
+                <div class="input-group">
+                    <label for="password">Mot de Passe</label>
+                    <input type="password" name="password" id="password">
+                    <div id="password-error" class="error-message"></div>
+                </div>
+
+                <div style="text-align: right; margin-bottom: 20px;">
+                    <a href="reset_password.php" style="color: #4CAF50;">Mot de passe oublié ?</a>
+                </div>
+
+                <div class="input-group">
+                    <div class="g-recaptcha" data-sitekey="6Lcq3SQrAAAAANERTeLnLsb9aTtu4mze-z4V7BQR"></div>
+                    <div id="captcha-error" class="error-message" style="position: static; margin-top: 10px; text-align: center;"></div>
+                </div>
+
+                <div class="input-group">
+                    <button type="submit" class="btn">Se connecter</button>
+                </div>
+
+                <p style="text-align:center;">
+                    Vous n'avez pas de compte ? <a href="../signup/signup.php">Inscrivez-vous</a>
+                </p>
+            </form>
+
+            <div class="social-buttons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-google"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </main>
+
+    <footer class="footer">
+        <p>© <span id="year"></span>, réalisé avec <i class="fas fa-heart"></i> par <a href="https://www.creative-tim.com/" target="_blank">Creative Tim</a> pour un web meilleur.</p>
+    </footer>
+
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        document.getElementById("login-form").addEventListener("submit", function(event) {
+            var valid = true;
+            var idUtilisateur = document.getElementById("id_utilisateur").value.trim();
+            var password = document.getElementById("password").value.trim();
+            var recaptcha = grecaptcha.getResponse();
+
+            // Réinitialiser les messages d'erreur
+            document.getElementById("id-error").textContent = "";
+            document.getElementById("password-error").textContent = "";
+            document.getElementById("captcha-error").textContent = "";
+
+            if (idUtilisateur === "") {
+                document.getElementById("id-error").textContent = "Veuillez saisir votre ID.";
+                valid = false;
+            } else if (isNaN(idUtilisateur)) {
+                document.getElementById("id-error").textContent = "L'ID doit être un nombre.";
+                valid = false;
+            }
+
+            if (password === "") {
+                document.getElementById("password-error").textContent = "Veuillez saisir votre mot de passe.";
+                valid = false;
+            } else if (password.length < 6) {
+                document.getElementById("password-error").textContent = "Le mot de passe doit contenir au moins 6 caractères.";
+                valid = false;
+            }
+
+            if (recaptcha.length === 0) {
+                document.getElementById("captcha-error").textContent = "Veuillez valider le reCAPTCHA.";
+                valid = false;
+            }
+
+            if (!valid) {
+                event.preventDefault();
+            }
+        });
+    </script>
 </body>
-<footer>
-  <div class="container">
-    <div class="row align-items-center justify-content-lg-between">
-      <div class="col-12 col-md-6 my-auto">
-        <div class="copyright text-center text-sm text-white text-lg-start">
-          ©
-          <script>
-            document.write(new Date().getFullYear())
-          </script>,
-          made with <i class="fa fa-heart" aria-hidden="true"></i> by
-          <a href="https://www.creative-tim.com/" class="font-weight-bold text-white" target="_blank">Creative Tim</a>
-          for a better web.
-        </div>
-      </div>
-      <div class="col-12 col-md-6">
-        <ul class="nav nav-footer justify-content-center justify-content-lg-end">
-          <li class="nav-item">
-            <a href="https://www.creative-tim.com/" class="nav-link text-white" target="_blank">Creative Tim</a>
-          </li>
-          <li class="nav-item">
-            <a href="https://www.creative-tim.com/presentation" class="nav-link text-white" target="_blank">About Us</a>
-          </li>
-          <li class="nav-item">
-            <a href="https://www.creative-tim.com/blog" class="nav-link text-white" target="_blank">Blog</a>
-          </li>
-          <li class="nav-item">
-            <a href="https://www.creative-tim.com/license" class="nav-link pe-0 text-white" target="_blank">License</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-</footer>
-  <!--   Core JS Files   -->
-  <script src="../../../Public/assets/js/core/popper.min.js"></script>
-  <script src="../../../Public/assets/js/core/bootstrap.min.js"></script>
-  <script src="../../../Public/assets/js/plugins/perfect-scrollbar.min.js"></script>
-  <script src="../../../Public/assets/js/plugins/smooth-scrollbar.min.js"></script>
-  <!-- Kanban scripts -->
-  <script src="../../../Public/assets/js/plugins/dragula/dragula.min.js"></script>
-  <script src="../../../Public/assets/js/plugins/jkanban/jkanban.min.js"></script>
-  <script>
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-      var options = {
-        damping: '0.5'
-      }
-      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-    }
-  </script>
-  <!-- Github buttons -->
-  <script async defer src="../../../Public/assets/buttons.github.io/buttons.js"></script>
-  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="../../../Public/assets/js/material-dashboard.mine63c.js?v=3.1.0"></script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9284dae65dc9edcb","version":"2025.1.0","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"token":"1b7cbb72744b40c580f8633c6b62637e","b":1}' crossorigin="anonymous"></script>
-
-<!-- Mirrored from demos.creative-tim.com/material-dashboard-pro/pages/authentication/signin/basic.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 30 Mar 2025 05:23:50 GMT -->
-
 </html>
