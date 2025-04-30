@@ -14,22 +14,28 @@
 
   <link rel="canonical" href="https://www.creative-tim.com/product/material-dashboard-pro" />
   <!--  Social tags      -->
-  <meta name="keywords" content="creative tim, html dashboard, html css dashboard, web dashboard, bootstrap 5 dashboard, bootstrap 5, css3 dashboard, bootstrap 5 admin, material dashboard bootstrap 5 dashboard, frontend, responsive bootstrap 5 dashboard, material design, material dashboard bootstrap 5 dashboard">
-  <meta name="description" content="Material Dashboard PRO is a beautiful Bootstrap 5 admin dashboard with a large number of components, designed to look beautiful, clean and organized. If you are looking for a tool to manage dates about your business, this dashboard is the thing for you.">
+  <meta name="keywords"
+    content="creative tim, html dashboard, html css dashboard, web dashboard, bootstrap 5 dashboard, bootstrap 5, css3 dashboard, bootstrap 5 admin, material dashboard bootstrap 5 dashboard, frontend, responsive bootstrap 5 dashboard, material design, material dashboard bootstrap 5 dashboard">
+  <meta name="description"
+    content="Material Dashboard PRO is a beautiful Bootstrap 5 admin dashboard with a large number of components, designed to look beautiful, clean and organized. If you are looking for a tool to manage dates about your business, this dashboard is the thing for you.">
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="product">
   <meta name="twitter:site" content="@creativetim">
   <meta name="twitter:title" content="Material Dashboard PRO by Creative Tim">
-  <meta name="twitter:description" content="Material Dashboard PRO is a beautiful Bootstrap 5 admin dashboard with a large number of components, designed to look beautiful, clean and organized. If you are looking for a tool to manage dates about your business, this dashboard is the thing for you.">
+  <meta name="twitter:description"
+    content="Material Dashboard PRO is a beautiful Bootstrap 5 admin dashboard with a large number of components, designed to look beautiful, clean and organized. If you are looking for a tool to manage dates about your business, this dashboard is the thing for you.">
   <meta name="twitter:creator" content="@creativetim">
-  <meta name="twitter:image" content="/../../s3.amazonaws.com/creativetim_bucket/products/51/original/opt_mdp_bs5_thumbnail.jpg">
+  <meta name="twitter:image"
+    content="/../../s3.amazonaws.com/creativetim_bucket/products/51/original/opt_mdp_bs5_thumbnail.jpg">
   <!-- Open Graph data -->
   <meta property="fb:app_id" content="655968634437471">
   <meta property="og:title" content="Material Dashboard PRO by Creative Tim" />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="../../dashboards/default.html" />
-  <meta property="og:image" content="../../../public/../../s3.amazonaws.com/creativetim_bucket/products/51/original/opt_mdp_bs5_thumbnail.jpg" />
-  <meta property="og:description" content="Material Dashboard PRO is a beautiful Bootstrap 5 admin dashboard with a large number of components, designed to look beautiful, clean and organized. If you are looking for a tool to manage dates about your business, this dashboard is the thing for you." />
+  <meta property="og:image"
+    content="../../../public/../../s3.amazonaws.com/creativetim_bucket/products/51/original/opt_mdp_bs5_thumbnail.jpg" />
+  <meta property="og:description"
+    content="Material Dashboard PRO is a beautiful Bootstrap 5 admin dashboard with a large number of components, designed to look beautiful, clean and organized. If you are looking for a tool to manage dates about your business, this dashboard is the thing for you." />
   <meta property="og:site_name" content="Creative Tim" />
   <!--     Fonts and icons     -->
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
@@ -37,9 +43,12 @@
   <link href="../../../public/assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="../../../public/assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer">
   <!-- Material Icons -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
   <!-- CSS Files -->
   <link id="pagestyle" href="../../../public/assets/css/material-dashboard.mine63c.css?v=3.1.0" rel="stylesheet" />
   <!-- Anti-flicker snippet (recommended)  -->
@@ -65,15 +74,18 @@
       'GTM-K9BGS8K': true
     });
   </script>
-  <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap"
+    rel="stylesheet">
   <link href="../../../Public/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-  <link rel="stylesheet" href="../../../Acceuil/assets/css/fontawesome.css">
-  <link rel="stylesheet" href="../../../Acceuil/assets/css/style.css">
-  <link rel="stylesheet" href="../../../Acceuil/assets/css/owl.css">
+  <link rel="stylesheet" href="../../../Public/assets/css/fontawesome.css">
+  <link rel="stylesheet" href="../../../Public/assets/css/style.css">
+  <link rel="stylesheet" href="../../../Public/assets/css/owl.css">
 </head>
 
-<body class="bg-black-100" style="background-color:rgb(230, 230, 230);"> <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NKDMSK6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<body class="bg-black-100" style="background-color:rgb(230, 230, 230);"> <noscript><iframe
+      src="https://www.googletagmanager.com/ns.html?id=GTM-NKDMSK6" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Header -->
   <div class="sub-header ">
     <div class="container ">
@@ -99,10 +111,11 @@
     <div class="row">
       <div class="col-12">
         <nav class="navbar navbar-expand-lg">
-          <a class="navbar-brand"  href="../index.html">
+          <a class="navbar-brand" href="../index.html">
             <img src="../../../Public/assets/images/logo.png" alt="LogiXpress Logo" height="50">
           </a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+            aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarResponsive">
@@ -117,10 +130,11 @@
                 <a class="nav-link text-dark" href="../pages/products.html">Products</a>
               </li>
               <li class="nav-item ">
-                <a class="nav-link text-dark" href="../pages/checkout.html">Checkout</a>
+                <a class="nav-link text-dark" href="../pages/claim.php">Claims</a>
               </li>
               <li class="nav-item dropdown">
-                <a class="dropdown-toggle nav-link text-dark" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">About</a>
+                <a class="dropdown-toggle nav-link text-dark" data-toggle="dropdown" href="#" role="button"
+                  aria-haspopup="true" aria-expanded="false">About</a>
 
                 <div class="dropdown-menu">
                   <a class="dropdown-item text-dark" href="../pages/about.html">About Us</a>
@@ -152,8 +166,10 @@
           <div class="row">
             <!-- Left Side: Alternating Images -->
             <div class="col-lg-5 d-none d-lg-flex h-100 my-auto pe-0 position-relative">
-              <div id="imageSlider" class="position-relative bg-gradient-dark h-100 w-100 border-radius-lg d-flex flex-column justify-content-center">
-                <img id="sliderImage" src="../../../public/assets/img/image1.jpg" alt="Slider Image" class="img-fluid w-100 h-100" style="object-fit: cover; border-radius: 10px;">
+              <div id="imageSlider"
+                class="position-relative bg-gradient-dark h-100 w-100 border-radius-lg d-flex flex-column justify-content-center">
+                <img id="sliderImage" src="../../../public/assets/img/image1.jpg" alt="Slider Image"
+                  class="img-fluid w-100 h-100" style="object-fit: cover; border-radius: 10px;">
               </div>
             </div>
 
@@ -203,53 +219,58 @@
                   </div>
                 </div>
                 <div class="card-body">
-                  <form role="form">
-                    <!-- User Information -->
-                    <div class="form-group mb-3">
-                      <label for="name" class="form-label">Name</label>
-                      <input type="text" id="name" class="form-control" placeholder="Enter your name" aria-label="Name">
+                  <form action="signform.php" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                      <label for="nom" class="form-label">Nom:</label>
+                      <input type="text" class="form-control" name="nom" id="nom" required>
                     </div>
 
-                    <div class="form-group mb-3">
-                      <label for="name" class="form-label">First Name</label>
-                      <input type="text" id="firstname" class="form-control" placeholder="Enter your First name" aria-label="First Name">
+                    <div class="mb-3">
+                      <label for="prenom" class="form-label">Prénom:</label>
+                      <input type="text" class="form-control" name="prenom" id="prenom" required>
                     </div>
 
-                    <div class="form-group mb-3">
-                      <label for="email" class="form-label">Email Address</label>
-                      <input type="email" id="email" class="form-control" placeholder="Enter your email" aria-label="Email">
-                    </div>
-                
-                    <div class="form-group mb-3">
-                      <label for="phone" class="form-label">Phone Number</label>
-                      <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number" aria-label="Phone Number">
+                    <div class="mb-3">
+                      <label for="email" class="form-label">Email:</label>
+                      <input type="email" class="form-control" name="email" id="email" required>
                     </div>
 
-                    
-                    <!-- Terms and Conditions -->
-                    <div class="form-check mb-3">
-                      <input class="form-check-input" type="checkbox" value="" id="terms" checked>
-                      <label class="form-check-label" for="terms">
-                        I agree to the <a href="javascript:;" class="text-primary font-weight-bold">Terms and Conditions</a>
-                      </label>
+                    <div class="mb-3">
+                      <label for="mot_de_passe" class="form-label">Mot de passe:</label>
+                      <input type="password" class="form-control" name="mot_de_passe" id="mot_de_passe" required>
                     </div>
 
-                    <!-- Submit Button -->
-                    <div class="text-center">
-                      <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                    <div class="mb-3">
+                      <label for="type" class="form-label">Type:</label>
+                      <select class="form-select" name="type" id="type" required>
+                        <option value="Client">Client</option>
+                      </select>
                     </div>
 
-                    <!-- Already Have an Account -->
-                    <p class="text-center text-muted mt-3 mb-0">
-                      Already have an account? <a href="../signin/basic.php" class="text-primary font-weight-bold">Sign in</a>
-                    </p>
+                    <div class="mb-3">
+                      <label for="phone" class="form-label">Phone Number:</label>
+                      <input type="text" class="form-control" name="phone_number" id="phone" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="profile_picture" class="form-label">Profile Picture:</label>
+                      <input type="file" class="form-control" name="profile_picture" id="profile_picture" required>
+                    </div>
+                    <div class="d-grid gap-2 mt-4">
+                      <button type="submit" class="btn btn-success btn-lg">S'inscrire</button>
+                    </div>
                   </form>
+
+                </div>
+                <div class="card-footer text-center">
+                  <p>Already have an account? <a href="signin/basic.php" class="text-success">Sign In</a></p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
       </div>
+
     </section>
   </main>
 
@@ -274,7 +295,24 @@
   <script async defer src="../../../public/assets/buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../../../public/assets/js/material-dashboard.mine63c.js?v=3.1.0"></script>
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9284daec8a15ee69","version":"2025.1.0","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"token":"1b7cbb72744b40c580f8633c6b62637e","b":1}' crossorigin="anonymous"></script>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015"
+    integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ=="
+    data-cf-beacon='{"rayId":"9284daec8a15ee69","version":"2025.1.0","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"token":"1b7cbb72744b40c580f8633c6b62637e","b":1}'
+    crossorigin="anonymous"></script>
+  <script>
+    function showSuccessPopup() {
+      alert("Register successful!");
+      setTimeout(function() {
+        window.location.href = '../index.html';
+      }, 3000);
+    }
+
+    window.onload = function() {
+      if (window.location.href.indexOf("success=true") !== -1) {
+        showSuccessPopup();
+      }
+    };
+  </script>
 </body>
 
 </html>

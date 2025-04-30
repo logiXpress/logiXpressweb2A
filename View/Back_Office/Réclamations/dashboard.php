@@ -44,7 +44,7 @@
         margin-top: 10px;
     }
 
-    /* Style for Voir Détails button */
+    /* Style for Voir DÃŠtails button */
     .btn-details {
         color: #007bff;
         text-decoration: none;
@@ -350,6 +350,12 @@
                 <div class="container-fluid py-4">
                     <div class="row">
                         <?php
+                        $pdo = new PDO('mysql:host=localhost;dbname=db', 'root', ''); // ajuste les infos selon ton serveur
+
+                        // Compter le nombre de réclamations
+                        $stmt = $pdo->query("SELECT COUNT(*) FROM reclamations"); // remplace 'reclamations' par le vrai nom de ta table
+                        $nbReclamations = $stmt->fetchColumn();
+                        
                         $cards = [
                             ['title' => 'Total Created', 'number' => 0, 'color' => 'primary', 'icon' => 'fa-plus-circle', 'desc' => 'Created orders'],
                             ['title' => 'Packages Pending', 'number' => 0, 'color' => 'warning', 'icon' => 'fa-hourglass-half', 'desc' => 'In queue'],
@@ -369,24 +375,29 @@
                             ['title' => 'Return Received', 'number' => 0, 'color' => 'success', 'icon' => 'fa-inbox', 'desc' => 'Return received'],
                             ['title' => 'Exchange Created', 'number' => 0, 'color' => 'info', 'icon' => 'fa-retweet', 'desc' => 'New exchange initiated'],
                             ['title' => 'Exchange Received', 'number' => 0, 'color' => 'success', 'icon' => 'fa-sync-alt', 'desc' => 'Exchange completed'],
-                            ['title' => 'Claims', 'number' => 0, 'color' => 'danger', 'icon' => 'fa-comment-dots', 'desc' => 'To be processed quickly'],
+                            ['title' => 'Claims', 'number' => $nbReclamations, 'color' => 'danger', 'icon' => 'fa-comment-dots', 'desc' => 'To be processed quickly'],
                         ];
 
 
                         foreach ($cards as $card) {
-                        ?>
+                            ?>
                             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
-                                <div class="card text-white h-100 shadow-lg border-0 position-relative overflow-hidden bg-<?= $card['color'] ?> rounded-3">
+                                <div
+                                    class="card text-white h-100 shadow-lg border-0 position-relative overflow-hidden bg-<?= $card['color'] ?> rounded-3">
                                     <div class="card-body d-flex flex-column justify-content-between p-4">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <div class="display-6 fw-bold"><?= $card['number'] ?></div>
-                                            <i class="fa <?= $card['icon'] ?> fa-2x icon-<?= $card['color'] ?> text-white"></i>
+                                            <i
+                                                class="fa <?= $card['icon'] ?> fa-2x icon-<?= $card['color'] ?> text-white"></i>
                                         </div>
                                         <h5 class="fw-semibold mb-1"><?= $card['title'] ?></h5>
                                         <p class="mb-3 small"><?= $card['desc'] ?></p>
-                                        <a href="#" class="btn btn-outline-light btn-sm mt-auto d-flex justify-content-between align-items-center fw-medium">
+
+                                        <a href="<?= $card['title'] === 'Claims' ? 'http://localhost/Project/View/Back_Office/Réclamations/claims.php' : '#' ?>"
+                                            class="btn btn-outline-light btn-sm mt-auto d-flex justify-content-between align-items-center fw-medium">
                                             See Details <i class="fa fa-arrow-right ms-2"></i>
                                         </a>
+
                                     </div>
                                 </div>
                             </div>

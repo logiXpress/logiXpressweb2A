@@ -1,38 +1,46 @@
 <!-- Ajout avant le formulaire -->
 <?php
+session_start();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  require_once '../../../config/config.php'; // Chemin vers config.php
+  require_once '../../../config/config.php';
+  require_once '../../../Controller/UtilisateurC.php'; // Ajoute ton contrôleur
 
   try {
-    // Obtenez la connexion PDO
     $pdo = config::getConnexion();
-
-    // Récupérez les données du formulaire
-    $id_utilisateur = isset($_POST['id_utilisateur']) ? $_POST['id_utilisateur'] : null;
-    $password = isset($_POST['password']) ? $_POST['password'] : null;
+    $id_utilisateur = $_POST['id_utilisateur'] ?? null;
+    $password = $_POST['password'] ?? null;
 
     if ($id_utilisateur && $password) {
-      // Préparez et exécutez la requête
-      $stmt = $pdo->prepare("SELECT Type FROM utilisateurs WHERE id_utilisateur = :id_utilisateur AND Mot_de_passe = :password");
-      $stmt->execute([
-        ':id_utilisateur' => $id_utilisateur,
-        ':password' => $password
-      ]);
+      $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE id_utilisateur = :id_utilisateur");
+      $stmt->execute([':id_utilisateur' => $id_utilisateur]);
 
-      $row = $stmt->fetch();
+      $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-      if ($row) {
-        if ($row['Type'] === 'Admin') {
-          header("Location: /Project/View/Back_Office/index.html");
+      if ($user) {
+        // Vérifier que le mot de passe correspond
+        if ($password === $user['Mot_de_passe']) { // Idéalement à remplacer par password_verify() si hashé
 
-          exit();
-        } elseif ($row['Type'] === 'Client') {
-          header("Location: /Project/View/Front_Office/index.html");
+          // Mettre dans la session ce qui est nécessaire
+          $_SESSION['user'] = $user;
+          $_SESSION['id_utilisateur'] = $user['id_utilisateur'];
 
-          exit();
+          if ($user['Type'] === 'Admin') {
+            $_SESSION['id_admin'] = $user['id_utilisateur'];
+            header("Location: /Project/View/Back_Office/Réclamations/dashboard.php");
+            exit();
+          } elseif ($user['Type'] === 'Client') {
+            $_SESSION['id_client'] = $user['id_utilisateur'];
+            header("Location: /Project/View/Acceuil/clientpage.php");
+            exit();
+          } else {
+            $error_message = "Type d'utilisateur inconnu.";
+          }
+        } else {
+          $error_message = "Mot de passe incorrect.";
         }
       } else {
-        $error_message = "ID utilisateur ou mot de passe incorrect.";
+        $error_message = "Utilisateur non trouvé.";
       }
     } else {
       $error_message = "Veuillez remplir tous les champs.";
@@ -42,11 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 ?>
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 
-<?php require_once '../../Front_Office/includes/header.php'; ?>
+<?php require_once '../../Back_Office/includes/header.php'; ?>
 
 <body class="bg-gray-200"><!-- Extra details for Live View on GitHub Pages --><!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NKDMSK6" height="0" width="0"
@@ -155,28 +166,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 
 </footer>
-  <!--   Core JS Files   -->
-  <script src="../../../Public/assets/js/core/popper.min.js"></script>
-  <script src="../../../Public/assets/js/core/bootstrap.min.js"></script>
-  <script src="../../../Public/assets/js/plugins/perfect-scrollbar.min.js"></script>
-  <script src="../../../Public/assets/js/plugins/smooth-scrollbar.min.js"></script>
-  <!-- Kanban scripts -->
-  <script src="../../../Public/assets/js/plugins/dragula/dragula.min.js"></script>
-  <script src="../../../Public/assets/js/plugins/jkanban/jkanban.min.js"></script>
-  <script>
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-      var options = {
-        damping: '0.5'
-      }
-      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+<!--   Core JS Files   -->
+<script src="../../../Public/assets/js/core/popper.min.js"></script>
+<script src="../../../Public/assets/js/core/bootstrap.min.js"></script>
+<script src="../../../Public/assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../../../Public/assets/js/plugins/smooth-scrollbar.min.js"></script>
+<!-- Kanban scripts -->
+<script src="../../../Public/assets/js/plugins/dragula/dragula.min.js"></script>
+<script src="../../../Public/assets/js/plugins/jkanban/jkanban.min.js"></script>
+<script>
+  var win = navigator.platform.indexOf('Win') > -1;
+  if (win && document.querySelector('#sidenav-scrollbar')) {
+    var options = {
+      damping: '0.5'
     }
-  </script>
-  <!-- Github buttons -->
-  <script async defer src="../../../Public/assets/buttons.github.io/buttons.js"></script>
-  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="../../../Public/assets/js/material-dashboard.mine63c.js?v=3.1.0"></script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9284dae65dc9edcb","version":"2025.1.0","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"token":"1b7cbb72744b40c580f8633c6b62637e","b":1}' crossorigin="anonymous"></script>
+    Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+  }
+</script>
+<!-- Github buttons -->
+<script async defer src="../../../Public/assets/buttons.github.io/buttons.js"></script>
+<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+<script src="../../../Public/assets/js/material-dashboard.mine63c.js?v=3.1.0"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015"
+  integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ=="
+  data-cf-beacon='{"rayId":"9284dae65dc9edcb","version":"2025.1.0","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"token":"1b7cbb72744b40c580f8633c6b62637e","b":1}'
+  crossorigin="anonymous"></script>
 
 <!-- Mirrored from demos.creative-tim.com/material-dashboard-pro/pages/authentication/signin/basic.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 30 Mar 2025 05:23:50 GMT -->
 

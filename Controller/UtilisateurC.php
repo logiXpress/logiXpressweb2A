@@ -1,6 +1,7 @@
 <?php
-require_once '../config/config.php'; // Connexion à la base de données
-require_once '../Model/Utilisateur.php';
+require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../Model/Utilisateur.php';
+
 
 class UtilisateurC {
     private $pdo;
