@@ -1,6 +1,6 @@
 <?php
-require_once '../Controller/UtilisateurC.php';
-require_once '../Model/Utilisateur.php';
+require_once '../../../Controller/UtilisateurC.php';
+require_once '../../../Model/Utilisateur.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nom = htmlspecialchars($_POST['nom']);

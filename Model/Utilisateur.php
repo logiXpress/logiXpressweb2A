@@ -6,14 +6,17 @@ class Utilisateur {
     private $email;
     private $motDePasse;
     private $type;
+    private $phone_number; // New attribute for phone number
 
-    public function __construct($nom, $prenom, $email, $motDePasse, $type, $id_utilisateur = null) {
+    public function __construct($nom, $prenom, $email, $motDePasse, $type,$phone_number, $id_utilisateur = null) {
         $this->id_utilisateur = $id_utilisateur;
         $this->nom = $nom;
         $this->prenom = $prenom;
         $this->email = $email;
         $this->motDePasse = $motDePasse;
         $this->type = $type;
+        $this->phone_number = $phone_number;
+
     }
 
     // Getters
@@ -35,7 +38,9 @@ class Utilisateur {
     public function getType() {
         return $this->type;
     }
-
+    public function getphone() {
+        return $this->phone_number;
+    }
     // Setters
     public function setId($id_utilisateur) {
         $this->id_utilisateur = $id_utilisateur;
@@ -59,6 +64,9 @@ class Utilisateur {
 
     public function setType($type) {
         $this->type = $type;
+    }
+    public function setphone($phone_number) {
+        $this->phone_number = $phone_number;
     }
 }
 ?>
