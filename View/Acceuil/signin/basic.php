@@ -1,52 +1,52 @@
 <!-- Ajout avant le formulaire -->
 <?php
+session_start();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  require_once '../../../config/config.php'; // Chemin vers config.php
+    require_once '../../../config/config.php';
 
-  try {
-    // Obtenez la connexion PDO
-    $pdo = config::getConnexion();
+    try {
+        $pdo = config::getConnexion();
+        $id_utilisateur = $_POST['id_utilisateur'] ?? null;
+        $password = $_POST['password'] ?? null;
 
-    // Récupérez les données du formulaire
-    $id_utilisateur = isset($_POST['id_utilisateur']) ? $_POST['id_utilisateur'] : null;
-    $password = isset($_POST['password']) ? $_POST['password'] : null;
+        if ($id_utilisateur && $password) {
+            $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE id_utilisateur = :id_utilisateur AND Mot_de_passe = :password");
+            $stmt->execute([
+                ':id_utilisateur' => $id_utilisateur,
+                ':password' => $password
+            ]);
 
-    if ($id_utilisateur && $password) {
-      // Préparez et exécutez la requête
-      $stmt = $pdo->prepare("SELECT Type FROM utilisateurs WHERE id_utilisateur = :id_utilisateur AND Mot_de_passe = :password");
-      $stmt->execute([
-        ':id_utilisateur' => $id_utilisateur,
-        ':password' => $password
-      ]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-      $row = $stmt->fetch();
+            if ($user) {
+                $_SESSION['user'] = $user;
+                $_SESSION['id_utilisateur'] = $user['id_utilisateur'];
 
-      if ($row) {
-        if ($row['Type'] === 'Admin') {
-          header("Location: /Project/View/Back_Office/index.html");
-
-          exit();
-        } elseif ($row['Type'] === 'Client') {
-          header("Location: /Project/View/Front_Office/index.html");
-
-          exit();
+                if ($user['Type'] === 'Admin') {
+                    header("Location: /Project/View/Back_Office/livraison/dashboard.php");
+                    exit();
+                } elseif ($user['Type'] === 'Client') {
+                    header("Location: /Project/View/Acceuil/clientpage.php");	
+                    exit();
+                }
+            } else {
+                $error_message = "ID utilisateur ou mot de passe incorrect.";
+            }
+        } else {
+            $error_message = "Veuillez remplir tous les champs.";
         }
-      } else {
-        $error_message = "ID utilisateur ou mot de passe incorrect.";
-      }
-    } else {
-      $error_message = "Veuillez remplir tous les champs.";
+    } catch (Exception $e) {
+        die('Erreur : ' . $e->getMessage());
     }
-  } catch (Exception $e) {
-    die('Erreur : ' . $e->getMessage());
-  }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 
-<?php require_once '../../Front_Office/includes/header.php'; ?>
+<?php require_once '../../Back_Office/includes/header.php'; ?>
 
 <body class="bg-gray-200"><!-- Extra details for Live View on GitHub Pages --><!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NKDMSK6" height="0" width="0"

@@ -1,3 +1,7 @@
+<?php
+// Include the Firebase/MySQL update functionality
+include_once '../api/updateLocation.php'; // Adjust the path as needed
+?>
 <!DOCTYPE html>
 <html lang="en">
 <?php require_once '../includes/header.php'; ?>
@@ -10,7 +14,6 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-
   <style>
     #map {
       height: 600px;
@@ -156,10 +159,10 @@
 
           async function updateMap() {
             try {
-              let livreurResponse = await fetch('http://localhost/Project/View/Front_Office/api/getLivreursLocation.php');
+              let livreurResponse = await fetch('http://localhost/Project/View/Back_Office/api/getLivreursLocation.php');
               let livreurData = await livreurResponse.json();
 
-              let livraisonResponse = await fetch('http://localhost/Project/View/Front_Office/api/getLivraisonLocation.php');
+              let livraisonResponse = await fetch('http://localhost/Project/View/Back_Office/api/getLivraisonLocation.php');
               let livraisonData = await livraisonResponse.json();
 
               // Remove only livreur markers, NOT manually toggled routes

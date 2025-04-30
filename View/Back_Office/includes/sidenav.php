@@ -1,81 +1,109 @@
-
-<?php $currentPage = basename($_SERVER['PHP_SELF']); ?>
-
-<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2 bg-white my-2" id="sidenav-main" data-color="success">
-    <div class="sidenav-header">
-        <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-        <a class="navbar-brand px-4 py-3 m-0" href="dashboard.php" target="_blank">
-            <img src="../../../Public/assets/img/logo.png" class="navbar-brand-img" width="300" height="100" alt="main_logo">
+<?php include '../../../config/path.php'; ?>
+<div class="sidebar" data-color="white" data-background-color="rose" data-image="../../../public/assets/img/sidebar-1.jpg">
+  <div class="logo" style="display: flex; justify-content: center; align-items: center; height: 100px;">
+    <a href="../livraison/dashboard.php" class="simple-text logo-normal">
+      <img src="<?php echo BASE_URL; ?>/public/assets/img/logo.png" alt="LogiXpress Logo" style="width: 150px;"><span>LX</span>
+    </a>
+  </div>
+  <div class="sidebar-wrapper">
+    <ul class="nav">
+      <!-- Dashboard -->
+      <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>">
+        <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/livraison/dashboard.php">
+          <i class="material-icons">dashboard</i>
+          <p>Dashboard</p>
         </a>
-    </div>
-    <hr class="horizontal dark mt-0 mb-2">
-    <div class="collapse navbar-collapse w-auto h-auto" id="sidenav-collapse-main">
-        <ul class="navbar-nav">
-            <!-- Profile Section -->
-            <li class="nav-item mb-2 mt-0">
-                <a data-bs-toggle="collapse" href="#ProfileNav" class="nav-link text-dark" aria-controls="ProfileNav" role="button" aria-expanded="false">
-                    <img src="../../../Public/assets/img/team-3.jpg" class="avatar">
-                    <span class="nav-link-text ms-2 ps-1">Brooklyn Alice</span>
-                </a>
-                <div class="collapse" id="ProfileNav">
-                    <ul class="nav">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="pages/profile/overview.html">
-                                <span class="sidenav-mini-icon">MP</span>
-                                <span class="sidenav-normal ms-3 ps-1">My Profile</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="pages/account/settings.html">
-                                <span class="sidenav-mini-icon">S</span>
-                                <span class="sidenav-normal ms-3 ps-1">Settings</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="../../Acceuil/signin/basic.php">
-                                <span class="sidenav-mini-icon">L</span>
-                                <span class="sidenav-normal ms-3 ps-1">Logout</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+      </li>
+
+      <!-- Delivery Management (Collapsible) -->
+      <?php
+      $formPages = ['dashboard.php', 'ajouterlivraison.php', 'extended.html', 'validation.html', 'map.php', 'ListeLiv.php'];
+      $isFormsActive = in_array(basename($_SERVER['PHP_SELF']), $formPages);
+      ?>
+      <li class="nav-item <?= $isFormsActive ? 'active' : ''; ?>">
+        <a class="nav-link" data-toggle="collapse" href="#formsMenu" <?= $isFormsActive ? 'aria-expanded="true"' : ''; ?>>
+          <i class="material-icons">content_paste</i>
+          <p>Delivery Management <b class="caret"></b></p>
+        </a>
+        <div class="collapse <?= $isFormsActive ? 'show' : ''; ?>" id="formsMenu">
+          <ul class="nav">
+            <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'ajouterlivraison.php') ? 'active' : ''; ?>">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/livraison/ajouterlivraison.php">
+                <i class="material-icons">local_shipping</i>
+                <p>Add a Delivery</p>
+              </a>
             </li>
+            <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'ListeLiv.php') ? 'active' : ''; ?>">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/livraison/ListeLiv.php">
+                <i class="material-icons">list</i>
+                <p>Liste Of Deliveries</p>
+              </a>
+            </li>
+            <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'map.php') ? 'active' : ''; ?>">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/livraison/map.php">
+                <i class="material-icons">map</i>
+                <p>Deliveries Route</p>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
 
-            <!-- Dashboard Section -->
-            <hr class="horizontal dark mt-0">
-            <?php
-            $dashboardPages = ['dashboard.php', 'analytics.php', 'discover.php'];
-            $isDashboardActive = in_array($currentPage, $dashboardPages);
-            ?>
-            <li class="nav-item <?= $isDashboardActive ? 'active' : ''; ?>">
-                <a data-bs-toggle="collapse" href="#dashboardsExamples" class="nav-link text-dark <?= $isDashboardActive ? 'active' : ''; ?>" aria-controls="dashboardsExamples" role="button" aria-expanded="<?= $isDashboardActive ? 'true' : 'false'; ?>">
-                    <i class="material-symbols-rounded opacity-5">space_dashboard</i>
-                    <span class="nav-link-text ms-1 ps-1">Dashboards</span>
+      <!-- Vehicle Management (Collapsible) -->
+      <?php
+      $vehiclePages = ['add.php', 'listevehicules.php'];
+      $isVehicleActive = in_array(basename($_SERVER['PHP_SELF']), $vehiclePages);
+      ?>
+      <li class="nav-item <?= $isVehicleActive ? 'active' : ''; ?>">
+        <a class="nav-link" data-toggle="collapse" href="#vehicleMenu" <?= $isVehicleActive ? 'aria-expanded="true"' : ''; ?>>
+          <i class="material-icons">directions_car</i>
+          <p>Vehicle Management <b class="caret"></b></p>
+        </a>
+        <div class="collapse <?= $isVehicleActive ? 'show' : ''; ?>" id="vehicleMenu">
+          <ul class="nav">
+            <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'add.php') ? 'active' : ''; ?>">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/vehicule/add.php">
+                <i class="material-icons">add_circle</i>
+                <p>Add a Vehicle</p>
+              </a>
+            </li>
+            <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'listevehicules.php') ? 'active' : ''; ?>">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/vehicule/listevehicules.php">
+                <i class="material-icons">list</i>
+                <p>Liste of Vehicles</p>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <?php
+$maintenancePages = ['addE.php', 'listeentretiens.php'];
+$isMaintenanceActive = in_array(basename($_SERVER['PHP_SELF']), $maintenancePages);
+?>
+<li class="nav-item <?= $isMaintenanceActive ? 'active' : ''; ?>">
+    <a class="nav-link" data-toggle="collapse" href="#maintenanceMenu" <?= $isMaintenanceActive ? 'aria-expanded="true"' : ''; ?>>
+        <i class="material-icons">build</i>
+        <p>Maintenance Management <b class="caret"></b></p>
+    </a>
+    <div class="collapse <?= $isMaintenanceActive ? 'show' : ''; ?>" id="maintenanceMenu">
+        <ul class="nav">
+            <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'addE.php') ? 'active' : ''; ?>">
+                <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/Entretien/addE.php">
+                    <i class="material-icons">add_circle</i>
+                    <p>Add a Maintenance</p>
                 </a>
-
-                <div class="collapse <?= $isDashboardActive ? 'show' : ''; ?>" id="dashboardsExamples">
-                    <ul class="nav">
-                        <li class="nav-item <?= ($currentPage == 'dashboard.php') ? 'active' : ''; ?>">
-                            <a class="nav-link text-dark <?= ($currentPage == 'dashboard.php') ? 'active' : ''; ?>" href="dashboard.php">
-                                <span class="sidenav-mini-icon">A</span>
-                                <span class="sidenav-normal ms-1 ps-1">Dashboard</span>
-                            </a>
-                        </li>
-                        <li class="nav-item <?= ($currentPage == 'analytics.php') ? 'active' : ''; ?>">
-                            <a class="nav-link text-dark <?= ($currentPage == 'analytics.php') ? 'active' : ''; ?>" href="analytics.php">
-                                <span class="sidenav-mini-icon">A</span>
-                                <span class="sidenav-normal ms-1 ps-1">Analytics</span>
-                            </a>
-                        </li>
-                        <li class="nav-item <?= ($currentPage == 'discover.php') ? 'active' : ''; ?>">
-                            <a class="nav-link text-dark <?= ($currentPage == 'discover.php') ? 'active' : ''; ?>" href="discover.php">
-                                <span class="sidenav-mini-icon">D</span>
-                                <span class="sidenav-normal ms-1 ps-1">Discover</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+            </li>
+            <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'listeentretiens.php') ? 'active' : ''; ?>">
+                <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/entretien/listeentretiens.php">
+                    <i class="material-icons">list</i>
+                    <p>List of Maintenances</p>
+                </a>
             </li>
         </ul>
     </div>
-</aside>
+</li>
+
+    </ul>
+  </div>
+  <div class="sidebar-background"></div>
+</div>

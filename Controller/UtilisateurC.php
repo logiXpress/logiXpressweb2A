@@ -1,55 +1,86 @@
 <?php
-require_once '../config/config.php'; // Connexion à la base de données
-require_once '../Model/Utilisateur.php';
 
-class UtilisateurC {
+class UtilisateurC
+{
     private $pdo;
 
-    public function __construct() {
+    public function __construct()
+    {
         // Initialize the PDO instance
         $this->pdo = config::getConnexion();
     }
 
     // Public method to access the PDO instance
-    public function getPDO() {
+    public function getPDO()
+    {
         return $this->pdo;
     }
 
-   public function ajouterUtilisateur($utilisateur) {
-    // Construct the SQL query with string concatenation
-    $sql = "INSERT INTO Utilisateurs (Nom, Prénom, Email, Mot_de_passe, Type) 
-            VALUES ('" . $utilisateur->getNom() . "',
-                    '" . $utilisateur->getPrenom() . "',
-                    '" . $utilisateur->getEmail() . "',
-                    '" . $utilisateur->getMotDePasse() . "',
-                    '" . $utilisateur->getType() . "')";
+    public function ajouterUtilisateur($utilisateur) {
+        try {
+            $sql = "INSERT INTO Utilisateurs (Nom, Prénom, Email, Mot_de_passe, Type, phone_number, profile_picture) 
+                    VALUES (:nom, :prenom, :email, :mot_de_passe, :type, :phone_number, :profile_picture)";
+        
+            $stmt = $this->pdo->prepare($sql);
     
-    // Execute the query directly
-    $this->pdo->query($sql);
-}
+            // Collect the data from the utilisateur object
+            $nom = $utilisateur->getNom();
+            $prenom = $utilisateur->getPrenom();
+            $email = $utilisateur->getEmail();
+            $motDePasse = $utilisateur->getMotDePasse();
+            $type = $utilisateur->getType();
+            $phone_number = $utilisateur->getPhone();
+            $profile_picture = $utilisateur->getProfilePicture();
+    
+            // Bind the parameters to the statement
+            $stmt->bindParam(':nom', $nom);
+            $stmt->bindParam(':prenom', $prenom);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':mot_de_passe', $motDePasse);
+            $stmt->bindParam(':type', $type);
+            $stmt->bindParam(':phone_number', $phone_number);
+    
+            // For large objects (profile pictures), make sure it's bound properly
+            if ($profile_picture) {
+                $stmt->bindParam(':profile_picture', $profile_picture, PDO::PARAM_LOB);
+            } else {
+                $stmt->bindParam(':profile_picture', $profile_picture, PDO::PARAM_NULL);
+            }
+    
+            // Execute the statement
+            $stmt->execute();
+        } catch (Exception $e) {
+            // Catch any errors and log them
+            echo "Error: " . $e->getMessage();
+        }
+    }
+    
 
-    public function getUtilisateur($id) {
+
+    public function getUtilisateur($id)
+    {
         $sql = "SELECT * FROM Utilisateurs WHERE id_utilisateur = :id_utilisateur";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id_utilisateur' => $id]); // ✅ $id in PHP, but id_utilisateur in SQL
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    
-    public function updateUserType($id, $utilisateur) {
+
+    public function updateUserType($id, $utilisateur)
+    {
         try {
             // Start a transaction
             $this->pdo->beginTransaction();
-    
+
             // Step 1: Get the current user type
             $currentTypeQuery = "SELECT Type FROM Utilisateurs WHERE id_utilisateur = :id";
             $stmt = $this->pdo->prepare($currentTypeQuery);
             $stmt->execute([':id' => $id]);
             $currentType = $stmt->fetchColumn();
-    
+
             if ($currentType === false) {
                 throw new Exception("User not found.");
             }
-    
+
             // Step 2: Update the Utilisateur table with new details
             $updateQuery = "UPDATE Utilisateurs 
                             SET Nom = :nom,
@@ -67,7 +98,7 @@ class UtilisateurC {
                 ':type' => $utilisateur->getType(),
                 ':id_utilisateur' => $id
             ]);
-    
+
             // Step 3: Delete the user from the current child table based on their old type
             if ($currentType === 'Client') {
                 $deleteQuery = "DELETE FROM Clients WHERE id_client = :id";
@@ -76,11 +107,11 @@ class UtilisateurC {
             } elseif ($currentType === 'Admin') {
                 $deleteQuery = "DELETE FROM Admins WHERE id_admin = :id";
             }
-    
+
             // Delete the user from the previous type's table
             $deleteStmt = $this->pdo->prepare($deleteQuery);
             $deleteStmt->execute([':id' => $id]);
-    
+
             // Step 4: Insert the user into the appropriate child table based on the new type
             if ($utilisateur->getType() === 'Client') {
                 $insertQuery = "INSERT INTO Clients (id_client) VALUES (:id)";
@@ -90,14 +121,14 @@ class UtilisateurC {
             } elseif ($utilisateur->getType() === 'Admin') {
                 $insertQuery = "INSERT INTO Admins (id_admin) VALUES (:id)";
             }
-    
+
             // Insert into the new child table
             $insertStmt = $this->pdo->prepare($insertQuery);
             $insertStmt->execute([':id' => $id]);
-    
+
             // Commit the transaction
             $this->pdo->commit();
-    
+
             return true; // Successfully updated
         } catch (Exception $e) {
             // Rollback the transaction if an error occurs
@@ -105,16 +136,17 @@ class UtilisateurC {
             throw $e; // Rethrow the exception
         }
     }
-    
-    public function deleteUtilisateur($id) {
+
+    public function deleteUtilisateur($id)
+    {
         $sql = "DELETE FROM Utilisateurs WHERE id_utilisateur = :id_utilisateur";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id_utilisateur' => $id]);
     }
 
-    public function getAllUtilisateurs() {
+    public function getAllUtilisateurs()
+    {
         $sql = "SELECT * FROM Utilisateurs";
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 }
-?>

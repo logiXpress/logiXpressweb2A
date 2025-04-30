@@ -293,7 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </td>
                         <td><?= htmlspecialchars($livraison['Adresse_livraison']) ?></td>
                         <td><?= htmlspecialchars($livraison['Etat']) ?></td>
-                        <td><?= htmlspecialchars($livraison['Montant']) ?></td>
+                        <td><?= htmlspecialchars(string: $livraison['Montant']) ?></td>
                         <td><?= htmlspecialchars($livraison['Statut_paiement']) ?></td>
                         <td><?= htmlspecialchars($livraison['Mode_paiement']) ?></td>
                         <td><?= substr(htmlspecialchars($livraison['Description']), 0, 30) ?>...</td> <!-- Shortened for display -->
