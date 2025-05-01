@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 require "../../../Controller/candidatC.php";
@@ -8,17 +7,21 @@ if (!isset($_POST['idCandidat']) || empty($_POST['idCandidat'])) {
     header("Location: tableCandidat.php?error=missing_id");
     exit();
 }
+
 $id = htmlspecialchars($_POST['idCandidat']);
+
+// Optionally, validate idCandidat format (e.g., if it's a number)
+if (!is_numeric($id)) {
+    header("Location: tableCandidat.php?error=invalid_id");
+    exit();
+}
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
 <?php require_once '../includes/header.php'; ?>
 
-
-<body class="">
+<body>
   <div class="wrapper">
     <?php require_once '../includes/configurator.php'; ?>
     <?php require_once '../includes/sidenav.php'; ?>
@@ -28,7 +31,7 @@ $id = htmlspecialchars($_POST['idCandidat']);
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-            <form role="form" class="text-start d-flex flex-column align-items-center" method="POST" action="conAjouterEntretient.php">
+              <form role="form" class="text-start d-flex flex-column align-items-center" method="POST" action="conAjouterEntretient.php" onsubmit="return validateForm();">
                 <div class="card">
                   <div class="card-header card-header-unigreen card-header-text">
                     <div class="card-text">
@@ -48,7 +51,7 @@ $id = htmlspecialchars($_POST['idCandidat']);
                       <label class="col-sm-2 col-form-label" for="lien_entretient">Interview Link</label>
                       <div class="col-sm-7">
                         <div class="form-group">
-                          <input type="text" class="form-control" name="lien_entretient" id="lien_entretient" />
+                          <input type="text" class="form-control" name="lien_entretient" id="lien_entretient"/>
                         </div>
                       </div>
                     </div>
@@ -75,6 +78,26 @@ $id = htmlspecialchars($_POST['idCandidat']);
             format: 'YYYY-MM-DD HH:mm' // Adjust format as needed
         });
     });
+
+    // Sample form validation
+    function validateForm() {
+      let date = document.getElementById('date').value;
+      let lien = document.getElementById('lien_entretient').value;
+
+      // Check if date and link are filled out
+      if (!date || !lien) {
+        alert("All fields are required.");
+        return false;
+      }
+
+      // Validate the interview link
+      if (!lien.startsWith("https://meet.google.com/")) {
+        alert("The interview link must start with 'https://meet.google.com/'");
+        return false;
+      }
+
+      return true;
+    }
   </script>
   <script src="../includes/valider.js"></script>
 </body>

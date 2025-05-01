@@ -20,7 +20,7 @@ class candidatC
         // Debugging output
         var_dump($nom, $prenom, $email, $telephone, $CV, $dateCandidature);
     
-        // Bind parameters
+        
         $requette->bindParam(":nom", $nom);
         $requette->bindParam(":prenom", $prenom);
         $requette->bindParam(":email", $email);
@@ -28,7 +28,7 @@ class candidatC
         $requette->bindParam(":CV", $CV);
         $requette->bindParam(":Date_Candidature", $dateCandidature);
         
-        // Execute the query with error handling
+        
         try {
             if ($requette->execute()) {
                 echo "Record inserted successfully.";
@@ -44,16 +44,16 @@ class candidatC
     {
         $conn = config::getConnexion();
         try {
-            $requette = $conn->prepare("DELETE FROM CANDIDATS WHERE id_candidat = :id"); // Check column name
-            $requette->bindParam(":id", $idCandidat, PDO::PARAM_INT); // Use appropriate parameter type
+            $requette = $conn->prepare("DELETE FROM CANDIDATS WHERE id_candidat = :id");
+            $requette->bindParam(":id", $idCandidat, PDO::PARAM_INT); 
             $requette->execute();
             
-            // Optionally return the number of affected rows
-            return $requette->rowCount() > 0; // Returns true if deletion was successful
+            
+            return $requette->rowCount() > 0; 
         } catch (PDOException $e) {
-            // Handle exception (log it, rethrow it, etc.)
+            
             error_log("Error deleting candidate: " . $e->getMessage());
-            return false; // Return false on error
+            return false; 
         }
     }
     public function modifierCandidat($idCandidat, $nom, $prenom, $email, $telephone, $CV, $dateCandidature)
@@ -68,17 +68,17 @@ class candidatC
             $requette->bindParam(":telephone", $telephone);
             $requette->bindParam(":CV", $CV);
             $requette->bindParam(":Date_Candidature", $dateCandidature);
-            $requette->bindParam(":id", $idCandidat, PDO::PARAM_INT); // Specify parameter type
+            $requette->bindParam(":id", $idCandidat, PDO::PARAM_INT); 
             
-            // Execute the statement and check for success
+            
             $success = $requette->execute();
             
-            // Optionally return whether the update was successful
-            return $success; // Returns true if the update was successful
+            
+            return $success; 
         } catch (PDOException $e) {
-            // Handle exception (log it, rethrow it, etc.)
+            
             error_log("Error updating candidate: " . $e->getMessage());
-            return false; // Return false on error
+            return false; 
         }
     }
     public function ChercherEmailCandidat($email)

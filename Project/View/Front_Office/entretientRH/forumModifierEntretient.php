@@ -93,7 +93,8 @@ if (isset($tab) && !empty($tab)) {
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-            <form id="TypeValidation" class="form-horizontal " action="conModifierEntretient.php" method="post" enctype="multipart/form-data" >
+            <form id="TypeValidation" class="form-horizontal" action="conModifierEntretient.php" method="post" enctype="multipart/form-data" onsubmit="return validateUpdateForm();">
+
     <div class="card">
         <div class="card-header card-header-unigreen card-header-text">
             <div class="card-text">
@@ -141,6 +142,7 @@ if (isset($tab) && !empty($tab)) {
                 <div class="col-sm-7">
                     <div class="form-group">
                     <textarea class="form-control" name="Evaluation_entretient" id="Evaluation_entretient" rows="5"><?php echo htmlspecialchars($evaluation); ?></textarea>
+
                     </div>
                 </div>
             </div>
@@ -151,6 +153,8 @@ if (isset($tab) && !empty($tab)) {
     </div>
     <input type="hidden" class="form-control" id="idEntretien" name="idEntretien" value="<?php echo htmlspecialchars($id); ?>" />
 </form>
+
+
             </div>
         </div>
     </div>
@@ -169,7 +173,9 @@ if (isset($tab) && !empty($tab)) {
         });
     });
   </script>
-<script src="../includes/valider.js"></script>
+
+  
+<script src="validerupdate.js"></script>
 
 </body>
 

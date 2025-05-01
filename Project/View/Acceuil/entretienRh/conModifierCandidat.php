@@ -4,13 +4,13 @@ require_once __DIR__ . '/../../../Controller/candidatC.php';
 require_once __DIR__ . '/../../../Model/candidat.php';
 
 try {
-    // Validate ID
+    
     if (!isset($_POST['idCandidat']) || !is_numeric($_POST['idCandidat'])) {
         throw new Exception("Invalid candidate ID.");
     }
     $idCandidat = (int)$_POST['idCandidat'];
 
-    // Fetch existing candidate data
+    
     $candidatC = new CandidatC();
     $result = $candidatC->ChercherCandidatByID($idCandidat);
     if ($result === null) {
@@ -18,14 +18,14 @@ try {
     }
     $existingCandidate = $result;
 
-    // Get form data, fallback to existing data if unchanged
+
     $nom = isset($_POST['nom']) ? trim($_POST['nom']) : $existingCandidate['nom'];
     $prenom = isset($_POST['prenom']) ? trim($_POST['prenom']) : $existingCandidate['prenom'];
     $email = isset($_POST['email']) ? trim($_POST['email']) : $existingCandidate['email'];
     $telephone = isset($_POST['telephone']) ? trim($_POST['telephone']) : $existingCandidate['telephone'];
     $dateCandidature = isset($_POST['date']) ? trim($_POST['date']) : $existingCandidate['Date_Candidature'];
 
-    // Validate form data
+    
     if (empty($nom) || empty($prenom) || empty($email) || empty($telephone)) {
         throw new Exception("All fields are required.");
     }
@@ -34,8 +34,8 @@ try {
         throw new Exception("Invalid email format.");
     }
 
-    // Handle CV file upload
-    $CV = $existingCandidate['CV']; // Default to existing CV
+    //cv
+    $CV = $existingCandidate['CV'];
     if (isset($_FILES['CV']) && $_FILES['CV']['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['CV']['tmp_name'];
         $fileName = $_FILES['CV']['name'];
@@ -68,12 +68,9 @@ try {
         $CV = $dest_path;
     }
 
-    // Create Candidat object
+    // Candidat
     $candidat = new Candidat($nom, $prenom, $email, $telephone, $CV, $dateCandidature);
-
-    // Update the candidate in the database
     $candidatC->modifierCandidat($idCandidat, $nom, $prenom, $email, $telephone, $CV, $dateCandidature);
-
     $_SESSION['success'] = "Candidate updated successfully.";
     header("Location: dataTableCandidat.php");
     exit();

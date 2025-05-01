@@ -18,6 +18,85 @@ $tab = $entretienC->listeEntretien(); // Fetch interview data
 <!DOCTYPE html>
 <html lang="en">
 <?php require_once '../includes/header.php'; ?>
+<style>
+  .card-header {
+    display: flex;
+    align-items: center;
+    background-color: #2ecc71;
+    /* Unigreen color */
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    /* Rounded edges for the header */
+    position: absolute;
+    top: -35px;
+    left: 2px;
+    width: calc(100% - 10px);
+    /* To fit with the card width */
+  }
+
+  .icon {
+    background: #2ecc71;
+    /* Unigreen color */
+    color: white;
+    border-radius: 5px;
+    /* Now it's rectangular */
+    padding: 20px;
+    margin-right: 10px;
+    margin-bottom: 15px;
+  }
+
+  .card {
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    margin-bottom: 30px;
+  }
+
+  .form-label {
+    font-weight: 600;
+  }
+
+  .btn-primary {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+  }
+
+  .btn-primary:hover {
+    background-color: #27ae60;
+    border-color: #27ae60;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  table.dataTable {
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  table.dataTable thead {
+    background-color: #2ecc71;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  table.dataTable tbody td {
+    vertical-align: middle;
+    padding: 12px 10px;
+  }
+
+  table.dataTable tbody tr:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+  }
+
+  .btn-sm i {
+    margin-right: 5px;
+  }
+</style>
 
 <body class="">
 <?php require_once '../includes/configurator.php'; ?>
@@ -34,24 +113,26 @@ $tab = $entretienC->listeEntretien(); // Fetch interview data
                   <div class="card-icon">
                     <i class="material-icons">assignment</i>
                   </div>
-                  <h4 class="card-title">List of Interviews</h4>
+                 
                 </div>
                 <div class="card-body">
                   <div class="toolbar">
-                    <!--        Here you can write extra buttons/actions for the toolbar              -->
-                  </div>
+                  <h4 class="card-title">List of Interviews</h4>
+
+                          <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
                   <div class="material-datatables">
                     <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
                       <thead>
                         <tr>
-                        <th>Interview date</th>
-                      <th>Status</th>
-                      <th>Interview Link</th>
-                      <th>Evaluation</th>
-                      <th>Name</th>
-                      <th>Last name</th>
-                      <th>Email</th>
-                      <th>Telephone</th>
+                        <th><h6 style="text-align: center; ">Interview<br>Date</h6></th>
+                        <th><h6 style="text-align: center;padding-right: 20px;">Status</h6></th>
+                      <th><h6 style="text-align: center;">Interview Link</h6></th>
+                      <th><h6 style="text-align: center;padding-right: 20px;">Evaluation</h6></th>
+                      <th><h6 style="text-align: center;">Name</h6></th>
+                      <th><h6 style="text-align: center;padding-right: 20px;">Last name</h6></th>
+                      <th><h6 style="text-align: center;">Email</h6></th>
+                      <th><h6 style="text-align: center;padding-right: 20px;">Telephone</h6></th>
                       
                           <th class="disabled-sorting text-right"></th>
                         </tr>
@@ -104,14 +185,14 @@ for ($i = 0; $i < count($tab); $i++) {
     echo "<td class='text-right'>
         <form action='forumModifierEntretient.php' method='post' style='display: inline;'>
             <input type='hidden' name='idEntretien' value='" . (isset($tab[$i]["id_entretien"]) ? $tab[$i]["id_entretien"] : '') . "'>
-            <button type='submit' class='btn btn-warning btn btn-warning'>
-                <i class='material-icons'>edit</i>
+            <button type='submit' class='btn btn-warning open-modal'>
+                <i class='material-icons'>edit</i>Edit
             </button>
         </form>
         <form action='conSupprimerEntretien.php' method='post' style='display: inline;' onsubmit='alert('Form submitted!');'>
             <input type='hidden' name='idEntretien' value='" . (isset($tab[$i]["id_entretien"]) ? $tab[$i]["id_entretien"] : '') . "'>
-            <button type='submit' class='btn btn-link btn-danger btn-just-icon '>
-                <i class='material-icons'>delete</i>
+            <button type='submit' class='btn btn-danger mr-2 '>
+                <i class='material-icons'>delete</i>Delete
             </button>
         </form>
     </td>";

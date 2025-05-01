@@ -67,7 +67,7 @@ extract($candidate);
     <link rel="stylesheet" href="../../../Public/assets/css/fontawesome.css">
     <link rel="stylesheet" href="../../../Public/assets/css/style.css">
     <link rel="stylesheet" href="../../../Public/assets/css/owl.css">
-    <script src="../../../Public/assets/js/formValidation.js"></script>
+    
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
@@ -126,7 +126,7 @@ extract($candidate);
                         <li class="nav-item">
                             <a class="nav-link" href="../index.html">Home</a>
                         </li>
-                        <li class="nav-item active">
+                        <li class="nav-item ">
                             <a class="nav-link" href="products.html">Products</a>
                         </li>
                         <li class="nav-item">
@@ -141,6 +141,13 @@ extract($candidate);
                                 <a class="dropdown-item" href="terms.html">Terms</a>
                             </div>
                         </li>
+                        <li class="nav-item dropdown active">
+                <a class="dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Join</a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item " href="forumCandidat.php">Join Us</a>
+                  <a class="dropdown-item active" href="dataTableCandidat.php">List</a>
+                </div>
+              </li>
                         <li class="nav-item">
                             <a class="nav-link" href="contact.html">Contact Us</a>
                         </li>
@@ -172,7 +179,7 @@ extract($candidate);
                     </div>
                     <div class="col-md-12">
                         <div class="contact-form">
-                        <form method="POST" enctype="multipart/form-data" id="TypeValidation" class="form-horizontal" action="conModifierCandidat.php" onsubmit="return valideContenue()">
+                        <form method="POST" enctype="multipart/form-data" id="TypeValidation" class="form-horizontal" action="conModifierCandidat.php" onsubmit="return valide()">
     <input type="hidden" name="idCandidat" value="<?php echo htmlspecialchars($candidate['id_candidat'] ?? ''); ?>">
     <div class="row">
         <div class="col-lg-6">
@@ -229,6 +236,16 @@ extract($candidate);
             </div>
         </div>
     </div>
+    <br>
+        <br>
+
+       
+       <br>
+
+        <br>
+        <br>
+        <br>
+        <br>
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -274,7 +291,7 @@ extract($candidate);
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12">
                                     <fieldset>
-                                        <input name="email" type="text" class="form-control" id="email" pattern="[^ @]*@[^ @]*" placeholder="E-Mail Address" required="">
+                                        <input name="emaill" type="text" class="form-control" id="email" pattern="[^ @]*@[^ @]*" placeholder="E-Mail Address" required="">
                                     </fieldset>
                                 </div>
                                 <div class="col-lg-12">
