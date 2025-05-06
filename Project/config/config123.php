@@ -10,7 +10,7 @@ class config123
             $servername = "localhost";
             $username = "root";
             $password = "";
-            $dbname = "logixpress";
+            $dbname = "db";
             try {
                 self::$pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
                 self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
