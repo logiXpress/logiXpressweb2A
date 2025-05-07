@@ -170,6 +170,7 @@ try {
                     echo '<i class="fa fa-user-circle" style="font-size: 40px; margin-right: 10px;"></i>';
                   }
                   ?>
+<<<<<<< HEAD
                   <span><?php echo htmlspecialchars($user['Nom'] . ' ' . $user['Prénom']); ?></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
@@ -186,6 +187,27 @@ try {
                     <span class="sidebar-normal"> Settings </span>
                   </a>
                 </div>
+=======
+               <span><?php echo htmlspecialchars($user['Nom'] . ' ' . $user['Prénom']); ?></span>
+</a>
+<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+  <a class="dropdown-item" href="profile.php">
+    <span class="sidebar-mini"> MP </span>
+    <span class="sidebar-normal"> My Profile </span>
+  </a>
+  <a class="dropdown-item" href="edit_profile.php">
+    <span class="sidebar-mini"> EP </span>
+    <span class="sidebar-normal"> Edit Profile </span>
+  </a>
+  <!-- ✅ Remplacement de "Settings" par "Log out" -->
+  <div class="dropdown-divider"></div>
+  <a class="dropdown-item text-danger" href="../logout.php">
+    <span class="sidebar-mini"> LO </span>
+    <span class="sidebar-normal"> Log out </span>
+  </a>
+</div>
+
+>>>>>>> 244d8ed (logout)
               </li>
             <?php } ?>
 
