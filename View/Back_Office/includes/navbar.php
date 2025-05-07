@@ -1,46 +1,75 @@
-<nav class="navbar navbar-main navbar-expand-lg position-sticky mt-2 top-1 px-0 py-1 mx-3 shadow-none border-radius-lg z-index-sticky" id="navbarBlur" data-scroll="true">
-  <div class="container-fluid py-1 px-2">
-    <div class="sidenav-toggler sidenav-toggler-inner d-xl-block d-none">
-      <a href="javascript:;" class="nav-link text-body p-0">
-        <div class="sidenav-toggler-inner">
-          <i class="sidenav-toggler-line"></i>
-          <i class="sidenav-toggler-line"></i>
-          <i class="sidenav-toggler-line"></i>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+    <div class="container-fluid">
+      <div class="navbar-wrapper">
+        <div class="navbar-minimize">
+          <button id="minimizeSidebar" class="btn btn-just-icon btn-white btn-fab btn-round">
+            <i class="material-icons text_align-center visible-on-sidebar-regular">more_vert</i>
+            <i class="material-icons design_bullet-list-67 visible-on-sidebar-mini">view_list</i>
+          </button>
         </div>
-      </a>
-    </div>
-    <nav aria-label="breadcrumb" class="ps-2">
-      <ol class="breadcrumb bg-transparent mb-0 p-0">
-        <li class="breadcrumb-item text-sm text-dark active font-weight-bold" aria-current="page">Pages</li>
-      </ol>
-    </nav>
-    <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-      <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-        <div class="input-group input-group-outline">
-          <label class="form-label">Search here</label>
-          <input type="text" class="form-control">
-        </div>
+        <a class="navbar-brand" href="javascript:;">Dashboard</a>
       </div>
-      <ul class="navbar-nav justify-content-end">
-        <li class="nav-item">
-          <a href="authentication/signin/illustration.html" class="px-1 py-0 nav-link line-height-0" target="_blank">
-            <i class="material-symbols-rounded"> account_circle </i>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="javascript:;" class="nav-link py-0 px-1 line-height-0">
-            <i class="material-symbols-rounded fixed-plugin-button-nav"> settings </i>
-          </a>
-        </li>
-        <li class="nav-item dropdown py-0 pe-3">
-          <a href="javascript:;" class="nav-link py-0 px-1 position-relative line-height-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="material-symbols-rounded"> notifications </i>
-            <span class="position-absolute top-5 start-100 translate-middle badge rounded-pill bg-danger border border-white small py-1 px-2">
-              <span class="small">11</span>
-            </span>
-          </a>
-        </li>
-      </ul>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="navbar-toggler-icon icon-bar"></span>
+        <span class="navbar-toggler-icon icon-bar"></span>
+        <span class="navbar-toggler-icon icon-bar"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end">
+        <form class="navbar-form">
+          <div class="input-group no-border">
+            <input type="text" value="" class="form-control" placeholder="Search...">
+            <button type="submit" class="btn btn-white btn-round btn-just-icon">
+              <i class="material-icons">search</i>
+              <div class="ripple-container"></div>
+            </button>
+          </div>
+        </form>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="javascript:;">
+              <i class="material-icons">dashboard</i>
+              <p class="d-lg-none d-md-block">
+                Stats
+              </p>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link" href="http://example.com/" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="material-icons">notifications</i>
+              <span class="notification">5</span>
+              <p class="d-lg-none d-md-block">
+                Some Actions
+              </p>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" href="#">Mike John responded to your email</a>
+              <a class="dropdown-item" href="#">You have 5 new tasks</a>
+              <a class="dropdown-item" href="#">You're now friend with Andrew</a>
+              <a class="dropdown-item" href="#">Another Notification</a>
+              <a class="dropdown-item" href="#">Another One</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link" href="javascript:;" id="navbarDropdownProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="material-icons">person</i>
+              <p class="d-lg-none d-md-block">
+                Account
+              </p>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
+  <a class="dropdown-item" href="#">Profile</a>
+  <a class="dropdown-item" href="#">Settings</a>
+  <div class="dropdown-divider"></div>
+  <a class="dropdown-item text-danger" href="../../logout.php">Log out</a>
+</div>
+
+
+
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
+  <!-- End Navbar -->
