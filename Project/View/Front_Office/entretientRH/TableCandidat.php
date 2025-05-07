@@ -27,7 +27,37 @@ $tab=$candidatC->listeCandidat();
 <html lang="en">
 <?php require_once '../includes/header.php'; ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+  }
 
+  table.dataTable {
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  table.dataTable thead {
+    background-color: #2ecc71;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  table.dataTable tbody td {
+    vertical-align: middle;
+    padding: 12px 10px;
+  }
+
+  table.dataTable tbody tr:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+  }
+
+  .btn-sm i {
+    margin-right: 5px;
+  }
+</style>
 
 <body class="">
 <?php require_once '../includes/configurator.php'; ?>
@@ -51,16 +81,16 @@ $tab=$candidatC->listeCandidat();
         <!--        Here you can write extra buttons/actions for the toolbar              -->
     </div>
     <div class="material-datatables">
-    <button onclick="exportPDF()">Export PDF</button>
+    
         <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Telephone</th>
-                    <th>Application Date</th>
-                    <th class="disabled-sorting text-right">Actions</th>
+                    <th><h6 style="text-align: center; ">Name</h6></th>
+                    <th><h6 style="text-align: center; ">Last Name</h6></th>
+                    <th><h6 style="text-align: center; ">Email</h6></th>
+                    <th><h6 style="text-align: center; ">Telephone</h6></th>
+                    <th><h6 style="text-align: center; ">Application Date</h6></th>
+                    <th class="disabled-sorting text-right"></th>
                 </tr>
             </thead>
             <tbody>
@@ -94,6 +124,7 @@ $tab=$candidatC->listeCandidat();
                 ?>
             </tbody>
         </table>
+        <br><button onclick="exportPDF()" class="btn btn-round btn-info">Export PDF</button>
     </div>
 </div>
                 <!-- end content-->
@@ -548,43 +579,13 @@ $(document).ready(function() {
 
 
 
-<script>
-async function exportPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
 
-
-  
-  doc.text("Candidate List", 14, 15);
-
-  // Get only the rows and columns excluding the last (Action)
-  const table = document.querySelector('#datatables');
-  const headers = Array.from(table.querySelectorAll('thead th')).slice(0, -1);
-  const rows = Array.from(table.querySelectorAll('tbody tr'));
-
-  const head = [headers.map(th => th.innerText.trim())];
-  const body = rows.map(tr => {
-    const cells = Array.from(tr.querySelectorAll('td')).slice(0, -1);
-    return cells.map(td => td.innerText.trim());
-  });
-
-  doc.autoTable({
-    head: head,
-    body: body,
-    startY: 20,
-    styles: { fontSize: 10 },
-    headStyles: { fillColor: [46, 204, 113] }
-  });
-
-  doc.save("candidates.pdf");
-}
-</script>
 
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
+<script src="exportPDF.js"></script>
 </body>
 
 

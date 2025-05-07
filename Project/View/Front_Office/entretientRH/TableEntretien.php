@@ -122,6 +122,7 @@ $tab = $entretienC->listeEntretien(); // Fetch interview data
                           <!--        Here you can write extra buttons/actions for the toolbar              -->
                         </div>
                   <div class="material-datatables">
+                  
                     <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
                       <thead>
                         <tr>
@@ -203,6 +204,7 @@ for ($i = 0; $i < count($tab); $i++) {
                      
                       </tbody>
                     </table>
+                    <br><button onclick="exportInterviewsPDF()" class="btn btn-round btn-info">Export PDF</button>
                   </div>
                 </div>
                 <!-- end content-->
@@ -662,6 +664,11 @@ $(document).ready(function() {
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
   </script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script src="exportPDF.js"></script>
 
 </body>
 
