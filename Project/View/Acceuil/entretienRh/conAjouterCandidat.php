@@ -64,20 +64,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Send welcome email
         $mail = new PHPMailer(true);
+        $mail->SMTPDebug = 2;
         try {
             $mail->isSMTP();
-            $mail->Host = 'smtp.office365.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'messaoudiAsmaa@outlook.com'; // your Outlook email
-            $mail->Password = 'jifidagrgklluqyz'; // App Password from Outlook
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
+            $mail->Host       = 'smtp.gmail.com';
+$mail->SMTPAuth   = true;
+$mail->Username   = 'messaoudiasma60@gmail.com'; // your email
+$mail->Password   = 'foyu admn gjhq wzys'; // your app password
+$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+$mail->Port       = 587;
 
             // Optional debug
             //$mail->SMTPDebug = 2;
             //$mail->Debugoutput = 'html';
 
-            $mail->setFrom('messaoudiAsmaa@outlook.com', 'Logixpress HR');
+            $mail->setFrom('messaoudiasma60@gmail.com', 'Logixpress HR');
             $mail->addAddress($email, "$prenom $nom");
 
             $mail->isHTML(true);

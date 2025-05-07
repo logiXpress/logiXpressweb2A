@@ -10,14 +10,14 @@ try {
     $mail->SMTPDebug = 2; // Enable verbose debug output
     $mail->isSMTP();
     
-$mail->Host       = 'smtp.office365.com';
+$mail->Host       = 'smtp.gmail.com';
 $mail->SMTPAuth   = true;
-$mail->Username   = 'messaoudiAsmaa@outlook.com'; // your email
-$mail->Password   = 'btfjmkvaqdrdbpig'; // your app password
+$mail->Username   = 'messaoudiasma60@gmail.com'; // your email
+$mail->Password   = 'foyu admn gjhq wzys'; // your app password
 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 $mail->Port       = 587;
 
-    $mail->setFrom('messaoudiAsmaa@outlook.com', 'Logixpress HR');
+    $mail->setFrom('messaoudiasma60@gmail.com', 'Logixpress HR');
     $mail->addAddress('asma.messaoudi@esprit.tn', 'Test Recipient');
 
     $mail->isHTML(true);

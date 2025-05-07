@@ -118,7 +118,11 @@ $tab = $entretienC->listeEntretien(); // Fetch interview data
                 <div class="card-body">
                   <div class="toolbar">
                   <h4 class="card-title">List of Interviews</h4>
-
+                  <?php if (isset($_GET['mail']) && $_GET['mail'] === 'sent'): ?>
+        <div class="alert alert-success">
+            📧 Interview scheduled and email sent successfully!
+        </div>
+    <?php endif; ?>
                           <!--        Here you can write extra buttons/actions for the toolbar              -->
                         </div>
                   <div class="material-datatables">
@@ -190,7 +194,7 @@ for ($i = 0; $i < count($tab); $i++) {
                 <i class='material-icons'>edit</i>Edit
             </button>
         </form>
-        <form action='conSupprimerEntretien.php' method='post' style='display: inline;' onsubmit='alert('Form submitted!');'>
+        <form action='conSupprimerEntretien.php' method='post' style='display: inline;'>
             <input type='hidden' name='idEntretien' value='" . (isset($tab[$i]["id_entretien"]) ? $tab[$i]["id_entretien"] : '') . "'>
             <button type='submit' class='btn btn-danger mr-2 '>
                 <i class='material-icons'>delete</i>Delete
