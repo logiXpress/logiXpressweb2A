@@ -23,7 +23,7 @@
 
 <body>
 
-  <!-- ***** Preloader Start ***** -->
+  <!-- *** Preloader Start *** -->
   <div id="preloader">
     <div class="jumper">
       <div></div>
@@ -31,7 +31,7 @@
       <div></div>
     </div>
   </div>
-  <!-- ***** Preloader End ***** -->
+  <!-- *** Preloader End *** -->
 
   <!-- Header -->
   <div class="sub-header">
@@ -54,7 +54,7 @@
     </div>
   </div>
 
-  <header class="">
+  <header class="background-header">
     <nav class="navbar navbar-expand-lg">
       <div class="container">
         <a class="navbar-brand" href="../index.php">
@@ -110,12 +110,10 @@
 
   <!-- Page Content -->
   <?php
-
   session_start();
   include '../../../Controller/ReclamationC.php';
   include '../../../Controller/ReponsesAdminC.php';
   include '../../../Model/ReponsesAdmin.php';
-
 
   $reclamationC = new ReclamationC();
   $liste = [];
@@ -126,10 +124,12 @@
   $sortOrder = $_GET['order'] ?? 'asc';
   $statusFilter = $_GET['status_filter'] ?? null;
 
+  // Récupération des réclamations
   if (!empty($_SESSION['id_client'])) {
     $id_client = $_SESSION['id_client'];
     $liste = $reclamationC->getReclamationsByClientId($id_client, $sortColumn, $sortOrder, $statusFilter);
   }
+
   $reponsesAdminC = new ReponsesAdminC();
   $reponses = $reponsesAdminC->getAllReponsesAdmin();
   $reponsesByReclamation = [];
@@ -137,21 +137,17 @@
     $reponsesByReclamation[$reponse['id_reclamation']] = $reponse;
   }
 
-
-
-
-  // Filter by status if requested
-  if (!empty($_GET['status_filter'])) {
-    $statusFilter = $_GET['status_filter'];
+  // Filtrage par statut
+  if (!empty($statusFilter)) {
     $liste = array_filter($liste, function ($rec) use ($statusFilter) {
       return strtolower($rec['Statut']) === strtolower($statusFilter);
     });
   }
 
+  // Tri
   usort($liste, function ($a, $b) use ($sortColumn, $sortOrder) {
     $valA = strtolower($a[$sortColumn]);
     $valB = strtolower($b[$sortColumn]);
-
 
     if (is_numeric($valA) && is_numeric($valB)) {
       return ($sortOrder === 'asc') ? $valA - $valB : $valB - $valA;
@@ -160,7 +156,16 @@
     }
   });
 
+  // Pagination
+  $perPage = 3;
+  $totalClaims = count($liste);
+  $totalPages = ceil($totalClaims / $perPage);
+  $currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
+  $currentPage = max(1, min($totalPages, $currentPage));
+  $startIndex = ($currentPage - 1) * $perPage;
+  $liste = array_slice($liste, $startIndex, $perPage);
 
+  // Mode édition
   if (isset($_GET['id_reclamation'])) {
     $editMode = true;
     $idReclam = intval($_GET['id_reclamation']);
@@ -172,6 +177,7 @@
     }
   }
 
+  // Tri visuel
   function renderSortIcons($column, $currentSort, $currentOrder)
   {
     $ascUrl = "?sort=$column&order=asc";
@@ -218,12 +224,12 @@
       font-weight: 600;
     }
 
-    .btn-primary {
+    .btn-unigreen {
       background-color: #2ecc71;
       border-color: #2ecc71;
     }
 
-    .btn-primary:hover {
+    .btn-unigreen:hover {
       background-color: #27ae60;
       border-color: #27ae60;
     }
@@ -238,12 +244,14 @@
 
 
     .form-container {
-      flex: 0.4;
-      max-width: 40%;
+      flex: 0.5;
+      max-width: 1000px;
+      margin-left: 10px;
     }
 
+
     .table-container {
-      flex: 0.8;
+      flex: 0.5;
       max-width: 80%;
     }
 
@@ -256,146 +264,6 @@
       margin-bottom: 20px;
     }
 
-    .scrollable-table {
-      overflow-x: auto;
-      /* Active le défilement horizontal */
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      background-color: #ffffff;
-      padding: 20px;
-    }
-
-    .scrollable-table::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-thumb {
-      background-color: #3498db;
-      border-radius: 10px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-track {
-      background-color: #f1f1f1;
-    }
-
-    .scrollable-table::-webkit-scrollbar-thumb:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-track:hover {
-      background-color: #e0e0e0;
-    }
-
-    .scrollable-table::-webkit-scrollbar-corner {
-      background-color: #f1f1f1;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button {
-      background-color: #3498db;
-      border-radius: 10px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:decrement {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5H7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:increment {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M7 14l5-5 5 5H7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:decrement {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M10 7l5 5-5 5V7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:increment {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M14 7l-5 5 5 5V7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:decrement:hover {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5H7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:increment:hover {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M7 14l5-5 5 5H7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:decrement:hover {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M10 7l5 5-5 5V7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:increment:hover {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M14 7l-5 5 5 5V7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:decrement:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:increment:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:decrement:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:increment:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-thumb:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-track:hover {
-      background-color: #e0e0e0;
-    }
-
-    .scrollable-table::-webkit-scrollbar-corner:hover {
-      background-color: #f1f1f1;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table {
-      max-height: 500px;
-      /* Ajustez la hauteur selon vos besoins */
-      overflow-y: auto;
-      /* Active le défilement vertical */
-      margin-top: 10px;
-      /* Optionnel : espace au-dessus du tableau */
-    }
 
     table {
       width: 100%;
@@ -405,12 +273,12 @@
     }
 
     table th {
-      background-color: #9b59b6;
+      background-color: #2ecc71;
       color: white;
       text-align: left;
       /* Corrigé pour "left" uniquement */
       vertical-align: middle;
-      padding: 10px;
+      padding: 15px;
       border: none;
       border-radius: 10px 10px 0 0;
       font-size: 14px;
@@ -445,143 +313,237 @@
     .text-center {
       text-align: center;
     }
+
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .popup-container {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 30px;
+      width: 400px;
+      max-width: 90%;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .popup-text {
+      font-size: 18px;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    .popup-buttons {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .popup-buttons button {
+      padding: 10px 25px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #6c757d;
+      /* initial grey */
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .popup-buttons button:active {
+      transform: scale(0.97);
+    }
+
+    .popup-buttons button.clicked {
+      background-color: #28a745 !important;
+      /* green on click */
+    }
   </style>
-  <div class="wrapper">
+  <div class="row justify-content-center align-items-start">
+    <!-- Form Column -->
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <div class="icon"><i class="material-icons">contacts</i></div>
+          <h3 class="card-title">Add a Claim</h3>
+        </div>
+        <div class="card-body">
+          <!-- Formulaire -->
+          <!-- Formulaire -->
+          <form id="reclamationForm" action="Add.php" method="POST" onsubmit="return validateForm();">
+            <?php if ($editMode): ?>
+              <input type="hidden" name="id_reclamation" value="<?= $reclamationToEdit['id_reclamation']; ?>">
+            <?php endif; ?>
+
+            <!-- ID Client masqué, rempli automatiquement depuis la session -->
+            <input type="hidden" name="id_client" value="<?= $_SESSION['id_client'] ?? 1; ?>">
+
+            <div class="mb-3">
+              <label for="Categorie" class="form-label">Category :</label>
+              <select name="Categorie" id="Categorie" class="form-control" required>
+                <option disabled <?= !isset($reclamationToEdit['Categorie']) ? 'selected' : '' ?>>-- Select
+                  Category --</option>
+                <?php
+                $categories = [
+                  "Late Delivery",
+                  "Missed Delivery",
+                  "Wrong Address Delivery",
+                  "Package Not Received",
+                  "Damaged Package",
+                  "Missing Items",
+                  "Tampered Package",
+                  "Wrong Item Delivered",
+                  "Rude Delivery Staff",
+                  "Lack of Communication",
+                  "Unresponsive Support",
+                  "Inaccurate Tracking Information",
+                  "Overcharged",
+                  "Unauthorized Payment",
+                  "Refund Not Processed",
+                  "Coupon/Discount Not Applied",
+                  "Order Canceled Without Notice",
+                  "Order Not Processed",
+                  "Duplicate Order"
+                ];
+                foreach ($categories as $cat) {
+                  $selected = (isset($reclamationToEdit['Categorie']) && $reclamationToEdit['Categorie'] === $cat) ? 'selected' : '';
+                  echo "<option value=\"$cat\" $selected>$cat</option>";
+                }
+                ?>
+              </select>
+              <small id="categorieError" class="text-danger"></small>
+            </div>
+
+
+            <div class="mb-3">
+              <label for="Description" class="form-label">Description :</label>
+              <input type="text" name="Description" id="Description" class="form-control"
+                value="<?= htmlspecialchars($reclamationToEdit['Description'] ?? ''); ?>">
+              <small id="descriptionError" class="text-danger"></small>
+            </div>
+            <div class="d-flex justify-content-center mt-4">
+              <button type="submit" class="btn btn-unigreen btn-lg w-50" style="height: 50px;">
+                <i class="material-icons">send</i> <?= $editMode ? 'Edit' : 'Submit' ?>
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Column -->
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h3 class="card-title mb-0">My Claims</h3>
+          <form method="GET" action="claim.php" class="d-flex align-items-center gap-2">
+            <select name="status_filter" class="form-control">
+              <option value="">-- Filter by Status --</option>
+              <option value="In Progress" <?= (($_GET['status_filter'] ?? '') === 'In Progress') ? 'selected' : ''; ?>>In
+                Progress</option>
+              <option value="Resolved" <?= (($_GET['status_filter'] ?? '') === 'Resolved') ? 'selected' : ''; ?>>Resolved
+              </option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-unigreen">
+              <i class="material-icons">search</i>
+            </button>
+          </form>
+        </div>
+        <div class="card-body">
+          <div class="table-container">
 
 
 
-    <div class="main-panel">
 
-      <div class="content">
-        <div class="container-fluid">
-          <div class="content-wrapper">
-            <div class="form-container">
-              <div class="card">
-                <div class="card-header">
-                  <div class="icon"><i class="material-icons">contacts</i></div>
-                  <h3 class="card-title">Add a Claim</h3>
-                </div>
-                <div class="card-body">
-                  <!-- Formulaire -->
-                  <form id="reclamationForm" action="Add.php" method="POST" onsubmit="return validateForm();">
-                    <?php if ($editMode): ?>
-                      <input type="hidden" name="id_reclamation" value="<?= $reclamationToEdit['id_reclamation']; ?>">
-                    <?php endif; ?>
+            <?php if (!empty($liste)): ?>
+              <table>
+                <tr>
+                  <th>ID Claim <?= renderSortIcons('id_reclamation', $sortColumn, $sortOrder); ?></th>
+                  <th>ID Client</th>
+                  <th>Category <?= renderSortIcons('Categorie', $sortColumn, $sortOrder); ?></th>
+                  <th>Description <?= renderSortIcons('Description', $sortColumn, $sortOrder); ?></th>
+                  <th>Status</th>
+                  <th>Response</th>
 
-                    <div class="mb-3">
-                      <label for="id_client" class="form-label">ID Client :</label>
-                      <input type="text" name="id_client" id="id_client"
-                        value="<?= htmlspecialchars($reclamationToEdit['id_client'] ?? ($_SESSION['id_client'] ?? '')); ?>"
-                        class="form-control">
+                  <th>Actions</th>
+                </tr>
+                <?php foreach ($liste as $rec): ?>
+                  <tr>
+                    <td><?= htmlspecialchars($rec['id_reclamation']); ?></td>
+                    <td><?= htmlspecialchars($rec['id_client']); ?></td>
+                    <td><?= htmlspecialchars($rec['Categorie']); ?></td>
+                    <td><?= htmlspecialchars($rec['Description']); ?></td>
+                    <td><?= htmlspecialchars($rec['Statut']); ?></td>
+                    <td>
+                      <?php if (isset($reponsesByReclamation[$rec['id_reclamation']])): ?>
+                        <?= htmlspecialchars($reponsesByReclamation[$rec['id_reclamation']]['Reponse']) ?>
+                      <?php else: ?>
+                        <em>No Response Yet !</em>
+                      <?php endif; ?>
+                    </td>
 
-                      <small id="idClientError" class="text-danger"></small>
-                    </div>
+                    <td>
+                      <a href="claim.php?id_reclamation=<?= $rec['id_reclamation']; ?>" title="Edit">
+                        <i class="material-icons" style="color: #3498db; cursor: pointer; font-size: 14px;">edit</i>
+                      </a>
+                      |
+                      <a href="delete.php?id_reclamation=<?= $rec['id_reclamation']; ?>"
+                        onclick="return confirm('Are you sure you want to delete your claim?');" title="Delete">
+                        <i class="material-icons" style="color: #e74c3c; cursor: pointer; font-size: 14px;">delete</i>
+                      </a>
 
-                    <div class="mb-3">
-                      <label for="Categorie" class="form-label">Category :</label>
-                      <input type="text" name="Categorie" id="Categorie" class="form-control"
-                        value="<?= htmlspecialchars($reclamationToEdit['Categorie'] ?? ''); ?>">
-                      <small id="categorieError" class="text-danger"></small>
-                    </div>
-
-                    <div class="mb-3">
-                      <label for="Description" class="form-label">Description :</label>
-                      <input type="text" name="Description" id="Description" class="form-control"
-                        value="<?= htmlspecialchars($reclamationToEdit['Description'] ?? ''); ?>">
-                      <small id="descriptionError" class="text-danger"></small>
-                    </div>
-
-                    <div class="d-flex justify-content-center mt-4">
-                      <button type="submit" class="btn btn-primary btn-lg w-50">
-                        <i class="material-icons">send</i> <?= $editMode ? 'Edit' : 'Submit' ?>
+                      <button class="btn btn-info open-thread" data-id="<?= $rec['id_reclamation'] ?>"
+                        style="border-radius: 50%; padding: 4px; width: 25px; height: 25px;">
+                        <i class="fas fa-comment-dots" style="font-size: 10px;"></i>
                       </button>
-                    </div>
-                  </form>
-
-                </div>
-              </div>
-            </div>
-
-            <div class="table-container">
-              <div class="scrollable-table">
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                  <h3 class="card-title" style="margin: 0;">My Claims</h3>
-                  <form method="GET" action="claim.php" style="display: flex; align-items: center; gap: 10px;">
-                    <select name="status_filter" class="form-control" style="padding: 6px 12px; border-radius: 6px;">
-                      <option value="">-- Filter by Status --</option>
-                      <option value="In Progress" <?= (($_GET['status_filter'] ?? '') === 'In Progress') ? 'selected' : ''; ?>>In Progress</option>
-                      <option value="Resolved" <?= (($_GET['status_filter'] ?? '') === 'Resolved') ? 'selected' : ''; ?>>
-                        Resolved
-                      </option>
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-primary" style="padding: 6px 12px;">
-                      <i class="material-icons">search</i>
-                    </button>
-                  </form>
-                </div>
-
-
-                <?php if (!empty($liste)): ?>
-                  <table>
-                    <tr>
-                      <th>ID Claim <?= renderSortIcons('id_reclamation', $sortColumn, $sortOrder); ?></th>
-                      <th>ID Client</th>
-                      <th>Category <?= renderSortIcons('Categorie', $sortColumn, $sortOrder); ?></th>
-                      <th>Description <?= renderSortIcons('Description', $sortColumn, $sortOrder); ?></th>
-                      <th>Status</th>
-                      <th>Response</th>
-
-                      <th>Actions</th>
-                    </tr>
-                    <?php foreach ($liste as $rec): ?>
-                      <tr>
-                        <td><?= htmlspecialchars($rec['id_reclamation']); ?></td>
-                        <td><?= htmlspecialchars($rec['id_client']); ?></td>
-                        <td><?= htmlspecialchars($rec['Categorie']); ?></td>
-                        <td><?= htmlspecialchars($rec['Description']); ?></td>
-                        <td><?= htmlspecialchars($rec['Statut']); ?></td>
-                        <td>
-                          <?php if (isset($reponsesByReclamation[$rec['id_reclamation']])): ?>
-                            <?= htmlspecialchars($reponsesByReclamation[$rec['id_reclamation']]['Reponse']) ?>
-                          <?php else: ?>
-                            <em>No Response Yet !</em>
-                          <?php endif; ?>
-                        </td>
-
-                        <td>
-                          <a href="claim.php?id_reclamation=<?= $rec['id_reclamation']; ?>" title="Edit">
-                            <i class="material-icons" style="color: #3498db; cursor: pointer; font-size: 14px;">edit</i>
-                          </a>
-                          |
-                          <a href="delete.php?id_reclamation=<?= $rec['id_reclamation']; ?>"
-                            onclick="return confirm('Are you sure you want to delete your claim?');" title="Delete">
-                            <i class="material-icons" style="color: #e74c3c; cursor: pointer; font-size: 14px;">delete</i>
-                          </a>
-
-                          <button class="btn btn-info open-thread" data-id="<?= $rec['id_reclamation'] ?>"
-                            style="border-radius: 50%; padding: 4px; width: 25px; height: 25px;">
-                            <i class="fas fa-comment-dots" style="font-size: 10px;"></i>
-                          </button>
 
 
 
 
-                        </td>
-                      </tr>
-                    <?php endforeach; ?>
-                  </table>
-                <?php else: ?>
-                  <p>No claim found! <?= htmlspecialchars($_SESSION['id_client'] ?? ''); ?>.</p>
-                <?php endif; ?>
-              </div>
-            </div>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              </table>
+              <!-- Pagination -->
+              <nav aria-label="Page navigation">
+                <ul class="pagination mt-3">
+                  <?php for ($page = 1; $page <= $totalPages; $page++): ?>
+                    <li class="page-item <?= ($page == $currentPage) ? 'active' : ''; ?>">
+                      <a class="page-link"
+                        href="?page=<?= $page ?>&sort=<?= $sortColumn ?>&order=<?= strtolower($sortOrder) ?>&status_filter=<?= urlencode($statusFilter) ?>">
+                        <?= $page ?>
+                      </a>
+                    </li>
+                  <?php endfor; ?>
+                </ul>
+              </nav>
+            <?php else: ?>
+              <p>No claim found! <?= htmlspecialchars($_SESSION['id_client'] ?? ''); ?>.</p>
+            <?php endif; ?>
+
           </div>
         </div>
       </div>
-
     </div>
   </div>
+
   <!-- Modal UNIQUE pour tous -->
   <div id="threadModal" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
@@ -595,7 +557,7 @@
           <form id="messageForm">
             <input type="hidden" name="id_reclamation" id="idReclamationInput">
             <textarea name="contenu" class="form-control" required></textarea>
-            <button type="submit" class="btn btn-primary mt-2">Send</button>
+            <button type="submit" class="btn btn-unigreen mt-2">Send</button>
           </form>
         </div>
       </div>
@@ -608,7 +570,7 @@
           const idReclamation = button.dataset.id;
           document.getElementById('idReclamationInput').value = idReclamation;
 
-          fetch(`load_thread.php?id_reclamation=${idReclamation}`)
+          fetch(load_thread.php ? id_reclamation = ${ idReclamation })
             .then(response => response.text())
             .then(data => {
               document.getElementById('threadContent').innerHTML = data;
@@ -626,7 +588,7 @@
           method: 'POST',
           body: formData
         }).then(() => {
-          return fetch(`load_thread.php?id_reclamation=${id}`);
+          return fetch(load_thread.php ? id_reclamation = ${ id });
         }).then(response => response.text())
           .then(data => {
             document.getElementById('threadContent').innerHTML = data;
@@ -652,32 +614,187 @@
       });
     });
   </script>
+  <!-- Overlay -->
+  <div id="popupOverlay"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;">
+  </div>
+
+  <!-- Popup -->
+  <div id="popup"
+    style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:25px; border-radius:15px; box-shadow:0 0 15px rgba(0,0,0,0.3); z-index:1000; width:350px; text-align:center;">
+    <p style="font-size:18px; margin-bottom:20px;">Would you like to have an Automated Description?</p>
+    <button id="yesBtn" onclick="handlePopupChoice(true)"
+      style="padding:10px 20px; margin:10px; background-color:#6c757d; color:white; border:none; border-radius:8px; cursor:pointer;">Yes</button>
+    <button id="noBtn" onclick="handlePopupChoice(false)"
+      style="padding:10px 20px; margin:10px; background-color:#6c757d; color:white; border:none; border-radius:8px; cursor:pointer;">No</button>
+  </div>
+
+
+
+  <script>
+    const descriptionInput = document.getElementById("Description");
+    let selectedCategory = null;
+
+    const descriptions = {
+      "Late Delivery": "Your package arrived later than expected",
+      "Missed Delivery": "The delivery was missed and no attempt was made to redeliver",
+      "Wrong Address Delivery": "The package was delivered to the wrong address",
+      "Package Not Received": "I havent received my package yet",
+      "Damaged Package": "The package arrived damaged",
+      "Missing Items": "Some items were missing from the package",
+      "Tampered Package": "The package seems to have been tampered with",
+      "Wrong Item Delivered": "I received a different item than what I ordered",
+      "Rude Delivery Staff": "The delivery staff was rude and unprofessional",
+      "Lack of Communication": "There was no communication regarding the delivery",
+      "Unresponsive Support": "Customer support is not responding to my queries",
+      "Inaccurate Tracking Information": "The tracking information provided is inaccurate",
+      "Overcharged": "I was overcharged for my order",
+      "Unauthorized Payment": "A payment was made without my authorization",
+      "Refund Not Processed": "My refund has not been processed yet",
+      "Coupon/Discount Not Applied": "The discount code was not applied to my order",
+      "Order Canceled Without Notice": "My order was canceled without any notification",
+      "Order Not Processed": "My order has not been processed yet",
+      "Duplicate Order": "My order was placed twice accidentally"
+    };
+
+    function showPopup(category) {
+      selectedCategory = category;
+      document.getElementById("popup").style.display = "block";
+      document.getElementById("popupOverlay").style.display = "block";
+    }
+
+    function hidePopup() {
+      document.getElementById("popup").style.display = "none";
+      document.getElementById("popupOverlay").style.display = "none";
+    }
+
+    function handlePopupChoice(useAuto) {
+      const yesBtn = document.getElementById("yesBtn");
+      const noBtn = document.getElementById("noBtn");
+
+      yesBtn.style.backgroundColor = "#6c757d";
+      noBtn.style.backgroundColor = "#6c757d";
+
+      if (useAuto) {
+        yesBtn.style.backgroundColor = "#28a745";
+      } else {
+        noBtn.style.backgroundColor = "#28a745";
+      }
+
+      setTimeout(() => {
+        hidePopup();
+        if (useAuto && selectedCategory && descriptions[selectedCategory]) {
+          animateTyping(descriptionInput, descriptions[selectedCategory]);
+        } else {
+          descriptionInput.value = "";
+        }
+      }, 400);
+    }
+
+    function animateTyping(element, text, index = 0) {
+      element.value = "";
+      let interval = setInterval(() => {
+        if (index < text.length) {
+          element.value += text.charAt(index);
+          index++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 40); // vitesse de frappe
+    }
+
+    // Événement de changement sur le champ catégorie
+    document.getElementById("Categorie").addEventListener("change", function () {
+      const selected = this.value;
+      if (descriptions[selected]) {
+        showPopup(selected);
+      }
+    });
+  </script>
+  <script>
+    const forbiddenWords = [
+      "putain", "merde", "connard", "salope", "enculé", "bordel",
+      "fuck", "shit", "bitch", "asshole", "bastard", "zebi", "asba",
+      "3asba", "nikomek", "tahan", "ta7an", "mnayek", "fucking",
+      "fucker", "zab", "kahba", "zokomek", "tetkouhb", "tetkouhbou",
+      "nyak", "puta", "pendejo", "hijo de puta",
+      "culero", "pendeja", "miboun", "mbachel"
+    ];
+
+    const descInput = document.getElementById('Description');
+    const errorMsg = document.getElementById('descriptionError');
+    const form = descInput.closest('form');
+
+    // Fonction pour simplifier les mots (réduit les répétitions de lettres)
+    function simplify(text) {
+      return text.toLowerCase().replace(/(.)\1{1,}/g, '$1'); // ex: fuuuuck => fuuck => fuck
+    }
+
+    // Fonction principale de détection + masquage
+    function maskProfanity(text) {
+      const lowerOriginal = text.toLowerCase();
+      let result = text;
+
+      forbiddenWords.forEach(word => {
+        // Construire une expression qui tolère les lettres répétées : f+u+c+k+
+        const flexiblePattern = word
+          .split('')
+          .map(letter => ${ letter } +)
+          .join('');
+        const regex = new RegExp(flexiblePattern, 'gi');
+
+        result = result.replace(regex, match => '*'.repeat(match.length));
+
+        // En plus, chercher même dans les mots composés, en mode "simplifié"
+        const simplified = simplify(lowerOriginal);
+        if (simplified.includes(word)) {
+          const originalIndex = simplified.indexOf(word);
+          const before = result.substring(0, originalIndex);
+          const stars = '*'.repeat(word.length);
+          const after = result.substring(originalIndex + word.length);
+          result = before + stars + after;
+        }
+      });
+
+      return result;
+    }
+
+    descInput.addEventListener('input', () => {
+      const original = descInput.value;
+      const masked = maskProfanity(original);
+      if (original !== masked) {
+        descInput.value = masked;
+        errorMsg.textContent = "⚠️ Inappropriate language detected and masked.";
+      } else {
+        errorMsg.textContent = "";
+      }
+    });
+
+    form.addEventListener('submit', function (e) {
+      if (descInput.value.includes('*')) {
+        e.preventDefault();
+        errorMsg.textContent = "Please remove inappropriate language before submitting.";
+      }
+    });
+  </script>
+
+
+
+
+
+
 
 
   <script>
     function validateForm() {
       let isValid = true;
 
-      // Récupérer les valeurs
-      const idClient = document.getElementById('id_client').value.trim();
       const categorie = document.getElementById('Categorie').value.trim();
       const description = document.getElementById('Description').value.trim();
 
-      // Cacher les anciens messages
-      document.getElementById('idClientError').textContent = '';
       document.getElementById('categorieError').textContent = '';
       document.getElementById('descriptionError').textContent = '';
 
-      // ID Client : Numérique
-      if (idClient === '') {
-        document.getElementById('idClientError').textContent = 'Veuillez renseigner ce champ.';
-        isValid = false;
-      } else if (!/^\d+$/.test(idClient)) {
-        document.getElementById('idClientError').textContent = 'Le champ doit être numérique.';
-        isValid = false;
-      }
-
-      // Categorie : Alphabétique
       if (categorie === '') {
         document.getElementById('categorieError').textContent = 'Veuillez renseigner ce champ.';
         isValid = false;
@@ -686,19 +803,18 @@
         isValid = false;
       }
 
-      // Description : Alphabétique (avec accents, espaces autorisés)
       if (description === '') {
         document.getElementById('descriptionError').textContent = 'Veuillez renseigner ce champ.';
         isValid = false;
       } else if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(description)) {
-        document.getElementById('descriptionError').textContent = 'La catégorie doit être alphabétique.';
+        document.getElementById('descriptionError').textContent = 'La description doit être alphabétique.';
         isValid = false;
       }
-
 
       return isValid;
     }
   </script>
+
 
   <!-- Footer Starts Here -->
   <footer>
@@ -793,10 +909,10 @@
 
   <script language="text/Javascript">
     cleared[0] = cleared[1] = cleared[2] = 0; //set a cleared flag for each field
-    function clearField(t) {                   //declaring the array outside of the
-      if (!cleared[t.id]) {                      // function makes it static and global
-        cleared[t.id] = 1;  // you could use true and false, but that's more typing
-        t.value = '';         // with more chance of typos
+    function clearField(t) { //declaring the array outside of the
+      if (!cleared[t.id]) { // function makes it static and global
+        cleared[t.id] = 1; // you could use true and false, but that's more typing
+        t.value = ''; // with more chance of typos
         t.style.color = '#fff';
       }
     }

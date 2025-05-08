@@ -3,9 +3,11 @@ require_once(__DIR__ . '/../config/config.php');
 
 
 
-class ReclamationC {
-    
-    public function listeReclamations() {
+class ReclamationC
+{
+
+    public function listeReclamations()
+    {
         $db = config::getConnexion();
         try {
             return $db->query("SELECT * FROM reclamations")->fetchAll(PDO::FETCH_ASSOC);
@@ -13,9 +15,10 @@ class ReclamationC {
             die("Erreur: " . $e->getMessage());
         }
     }
-    
 
-    public function deleteReclamation(int $id_reclamation): bool {
+
+    public function deleteReclamation(int $id_reclamation): bool
+    {
         $db = config::getConnexion();
         try {
             $req = $db->prepare("DELETE FROM reclamations WHERE id_reclamation = :id_reclamation");
@@ -26,7 +29,8 @@ class ReclamationC {
         }
     }
 
-    public function ajouterReclamation(Reclamation $rec) {
+    public function ajouterReclamation(Reclamation $rec)
+    {
         $db = config::getConnexion();
         try {
             $query = $db->prepare("INSERT INTO reclamations (id_client, Categorie, Description, Statut) VALUES (:id_client, :Categorie, :Description, 'In Progress')");
@@ -41,37 +45,38 @@ class ReclamationC {
     }
 
 
-  
+
     public function getReclamationsByClientId($id_client, $sortColumn = 'id_reclamation', $sortOrder = 'ASC', $statusFilter = null)
     {
         $db = config::getConnexion();
         try {
             $query = "SELECT * FROM reclamations WHERE id_client = :id_client";
-            
+
             if (!empty($statusFilter)) {
                 $query .= " AND LOWER(Statut) = :statusFilter";
             }
-            
+
             $query .= " ORDER BY $sortColumn $sortOrder LIMIT 50";
-    
+
             $stmt = $db->prepare($query);
             $stmt->bindParam(':id_client', $id_client);
-            
+
             if (!empty($statusFilter)) {
                 $statusFilter = strtolower($statusFilter);
                 $stmt->bindParam(':statusFilter', $statusFilter);
             }
-            
+
             $stmt->execute();
             return $stmt->fetchAll();
         } catch (Exception $e) {
             die('Erreur: ' . $e->getMessage());
         }
     }
-    
-    
 
-    public function updateReclamation(Reclamation $reclamation, int $id_reclamation): bool {
+
+
+    public function updateReclamation(Reclamation $reclamation, int $id_reclamation): bool
+    {
         $db = config::getConnexion();
         try {
             $req = $db->prepare("
@@ -80,10 +85,10 @@ class ReclamationC {
                 WHERE id_reclamation = :id_reclamation
             ");
             $req->execute([
-                'id_client'      => $reclamation->getIdClient(),
-                'Categorie'      => $reclamation->getCategorie(),
-                'Description'    => $reclamation->getDescription(),
-                'Statut'         => $reclamation->getStatut(),
+                'id_client' => $reclamation->getIdClient(),
+                'Categorie' => $reclamation->getCategorie(),
+                'Description' => $reclamation->getDescription(),
+                'Statut' => $reclamation->getStatut(),
                 'id_reclamation' => $id_reclamation
             ]);
 
@@ -92,7 +97,8 @@ class ReclamationC {
             die("Erreur: " . $e->getMessage());
         }
     }
-    public function changerStatut(int $id_reclamation, string $nouveauStatut) {
+    public function changerStatut(int $id_reclamation, string $nouveauStatut)
+    {
         $db = config::getConnexion();
         try {
             $query = $db->prepare("UPDATE reclamations SET Statut = :Statut WHERE id_reclamation = :id_reclamation");
@@ -104,7 +110,8 @@ class ReclamationC {
             die("Erreur: " . $e->getMessage());
         }
     }
-    public function getReponseByReclamationId($id_reclamation) {
+    public function getReponseByReclamationId($id_reclamation)
+    {
         $db = config::getConnexion();
         try {
             $query = $db->prepare("SELECT contenu FROM reponses_admin WHERE id_reclamation = :id_reclamation");
@@ -115,26 +122,46 @@ class ReclamationC {
             die("Erreur: " . $e->getMessage());
         }
     }
-    
-    
-    
 
-public function getReclamationsSortedBy($id_client, $column, $direction) {
-    $allowedColumns = ['id_reclamation', 'Categorie', 'Description'];
-    $allowedDirections = ['ASC', 'DESC'];
+    public function getReclamationById(int $id): ?array
+    {
+        $db = config::getConnexion();
+        try {
+            $stmt = $db->prepare("SELECT * FROM reclamations WHERE id_reclamation = :id");
+            $stmt->execute(['id' => $id]);
+            $reclamation = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!in_array($column, $allowedColumns) || !in_array($direction, $allowedDirections)) {
-        throw new Exception('Paramètres de tri invalides');
+            if ($reclamation) {
+                $reclamation['Reponse'] = $this->getReponseByReclamationId($id); // Inclure la réponse ici
+            }
+
+            return $reclamation ?: null;
+        } catch (Exception $e) {
+            die("Erreur: " . $e->getMessage());
+        }
     }
 
-    $sql = "SELECT * FROM reclamations WHERE id_client = :id_client ORDER BY $column $direction";
-    $db = config::getConnexion();
-    try {
-        $query = $db->prepare($sql);
-        $query->execute(['id_client' => $id_client]);
-        return $query->fetchAll();
-    } catch (Exception $e) {
-        die('Erreur: ' . $e->getMessage());
+
+
+
+    public function getReclamationsSortedBy($id_client, $column, $direction)
+    {
+        $allowedColumns = ['id_reclamation', 'Categorie', 'Description'];
+        $allowedDirections = ['ASC', 'DESC'];
+
+        if (!in_array($column, $allowedColumns) || !in_array($direction, $allowedDirections)) {
+            throw new Exception('Paramètres de tri invalides');
+        }
+
+        $sql = "SELECT * FROM reclamations WHERE id_client = :id_client ORDER BY $column $direction";
+        $db = config::getConnexion();
+        try {
+            $query = $db->prepare($sql);
+            $query->execute(['id_client' => $id_client]);
+            return $query->fetchAll();
+        } catch (Exception $e) {
+            die('Erreur: ' . $e->getMessage());
+        }
     }
-}}
+}
 ?>

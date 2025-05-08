@@ -14,12 +14,13 @@ if (isset($_GET['id_reponse'])) {
   $reponseToEdit = $rc->getReponseById($_GET['id_reponse']);
 }
 
-
 $sortColumn = $_GET['sort'] ?? '';
 $sortOrder = $_GET['order'] ?? 'asc';
 $filterStatus = $_GET['status_filter'] ?? '';
+$currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$perPage = 5;
 
-// Filtrage uniquement sur "In Progress" ou "Resolved"
+// Filtrage
 $filteredReclamations = array_filter($reclamations, function ($rec) use ($filterStatus) {
   return empty($filterStatus) || $rec['Statut'] === $filterStatus;
 });
@@ -35,13 +36,26 @@ if ($sortColumn) {
   });
 }
 
+// Pagination
+$totalItems = count($filteredReclamations);
+$totalPages = ceil($totalItems / $perPage);
+$offset = ($currentPage - 1) * $perPage;
+$pagedReclamations = array_slice($filteredReclamations, $offset, $perPage);
+
 function renderSortIcons($column, $currentColumn, $currentOrder)
 {
   $order = ($currentColumn === $column && $currentOrder === 'asc') ? 'desc' : 'asc';
   $arrow = ($currentColumn === $column) ? ($currentOrder === 'asc' ? '▲' : '▼') : '↕';
   return "<a href=\"?sort=$column&order=$order\" class='sort-arrow' data-sort='$column' data-order='$order'>$arrow</a>";
 }
+
+$categoryStats = [];
+foreach ($reclamations as $rec) {
+  $cat = $rec['Categorie'];
+  $categoryStats[$cat] = ($categoryStats[$cat] ?? 0) + 1;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -93,12 +107,12 @@ function renderSortIcons($column, $currentColumn, $currentOrder)
       font-weight: 600;
     }
 
-    .btn-primary {
+    .btn-unigreen {
       background-color: #2ecc71;
       border-color: #2ecc71;
     }
 
-    .btn-primary:hover {
+    .btn-unigreen:hover {
       background-color: #27ae60;
       border-color: #27ae60;
     }
@@ -129,147 +143,7 @@ function renderSortIcons($column, $currentColumn, $currentOrder)
       margin-bottom: 20px;
     }
 
-    .scrollable-table {
-      overflow-x: auto;
-      /* Active le défilement horizontal */
-      border-radius: 10px;
-      box-shadow: 0 40px 60px rgba(0, 0, 0, 0.1);
-      background-color: #ffffff;
-      padding: 15px;
-    }
 
-    .scrollable-table::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-thumb {
-      background-color: #3498db;
-      border-radius: 10px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-track {
-      background-color: #f1f1f1;
-    }
-
-    .scrollable-table::-webkit-scrollbar-thumb:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-track:hover {
-      background-color: #e0e0e0;
-    }
-
-    .scrollable-table::-webkit-scrollbar-corner {
-      background-color: #f1f1f1;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button {
-      background-color: #3498db;
-      border-radius: 10px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:decrement {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5H7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:increment {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M7 14l5-5 5 5H7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:decrement {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M10 7l5 5-5 5V7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:increment {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M14 7l-5 5 5 5V7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:decrement:hover {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5H7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:increment:hover {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M7 14l5-5 5 5H7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:decrement:hover {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M10 7l5 5-5 5V7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:increment:hover {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M14 7l-5 5 5 5V7z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:decrement:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:vertical:increment:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:decrement:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:horizontal:increment:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-thumb:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table::-webkit-scrollbar-track:hover {
-      background-color: #e0e0e0;
-    }
-
-    .scrollable-table::-webkit-scrollbar-corner:hover {
-      background-color: #f1f1f1;
-    }
-
-    .scrollable-table::-webkit-scrollbar-button:hover {
-      background-color: #2980b9;
-    }
-
-    .scrollable-table {
-      max-height: 500px;
-      /* Ajustez la hauteur selon vos besoins */
-      max-width: 1500px;
-
-      /* Active le défilement vertical */
-      margin-top: 10px;
-      /* Optionnel : espace au-dessus du tableau */
-    }
 
     table {
       width: 100%;
@@ -279,7 +153,7 @@ function renderSortIcons($column, $currentColumn, $currentOrder)
     }
 
     table th {
-      background-color: #9b59b6;
+      background-color: #2ecc71;
       color: white;
       text-align: center;
       /* Corrigé pour "left" uniquement */
@@ -319,17 +193,22 @@ function renderSortIcons($column, $currentColumn, $currentOrder)
       margin-top: 50px;
     }
 
-
-
     .text-center {
       text-align: center;
+    }
+
+    .modal-content {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .modal-body {
+      padding: 35px;
     }
   </style>
 </head>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
 
 <body>
   <div class="wrapper">
@@ -339,136 +218,222 @@ function renderSortIcons($column, $currentColumn, $currentOrder)
       <?php require_once '../includes/navbar.php'; ?>
       <div class="content">
         <div class="container-fluid">
-          <div class="content-wrapper">
-            <div class="table-container">
-              <div class="scrollable-table">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                  <div class="icon"><i class="material-icons">contacts</i></div>
-                  <h3 class="card-title">All Clients Claims</h3>
-                  <form method="GET" action="claims.php" style="display: flex; align-items: center; gap: 10px;">
-                    <select name="status_filter" class="form-control" style="padding: 6px 12px; border-radius: 6px;">
-                      <option value="">-- Filter by Status --</option>
-                      <option value="In Progress" <?= ($filterStatus === 'In Progress') ? 'selected' : ''; ?>>In Progress
-                      </option>
-                      <option value="Resolved" <?= ($filterStatus === 'Resolved') ? 'selected' : ''; ?>>Resolved</option>
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-primary" style="padding: 6px 12px;">
-                      <i class="material-icons">search</i>
-                    </button>
-                  </form>
-                </div>
-
-                <table>
-                  <tr>
-                    <th>Claim ID<?= renderSortIcons('id_reclamation', $sortColumn, $sortOrder); ?></th>
-                    <th>Client ID</th>
-                    <th>Category<?= renderSortIcons('Categorie', $sortColumn, $sortOrder); ?></th>
-                    <th>Description<?= renderSortIcons('Description', $sortColumn, $sortOrder); ?></th>
-                    <th>Status</th>
-                    <th>Response</th>
-                    <th>New Response</th>
-                  </tr>
-
-                  <?php
-                  $reclamationsAvecReponses = [];
-
-                  foreach ($filteredReclamations as $rec):
-                    $idRec = htmlspecialchars($rec['id_reclamation']);
-                    $hasResponse = false;
-                    ?>
-                    <tr>
-                      <td><?= $idRec ?></td>
-                      <td><?= htmlspecialchars($rec['id_client']); ?></td>
-                      <td><?= htmlspecialchars($rec['Categorie']); ?></td>
-                      <td><?= htmlspecialchars($rec['Description']); ?></td>
-                      <td><?= htmlspecialchars($rec['Statut']); ?></td>
-                      <td>
-                        <?php foreach ($reponses as $rep): ?>
-                          <?php if ($rep['id_reclamation'] == $rec['id_reclamation']): ?>
-                            <?php $hasResponse = true; ?>
-                            <p><strong><?= htmlspecialchars($rep['Reponse']) ?></strong></p>
-                            <small><?= htmlspecialchars($rep['Date_reponse']) ?></small><br>
-                            <div class="button-container d-flex justify-content-start">
-                              <a href="claims.php?id_reponse=<?= $rep['id_reponse'] ?>" class="material-icons icon-link edit"
-                                title="Edit">edit</a>
-                              <a href="delete2.php?id_reponse=<?= $rep['id_reponse'] ?>"
-                                class="material-icons icon-link delete" title="Delete"
-                                onclick="return confirm('Do you want to delete your response ?');">delete</a>
-                              <button class="btn btn-info open-thread d-flex align-items-center justify-content-center"
-                                data-id="<?= $rec['id_reclamation'] ?>"
-                                style="border-radius: 50%; width: 25px; height: 25px; padding: 0;">
-                                <i class="fas fa-comment-dots" style="font-size: 14px;"></i>
-                              </button>
-                            </div>
+          <div class="table-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <div class="icon"><i class="material-icons">contacts</i></div>
+              <h3 class="card-title">All Clients Claims</h3>
+              <form method="GET" action="claims.php" style="display: flex; align-items: center; gap: 10px;">
+                <select name="status_filter" class="form-control" style="padding: 6px 12px; border-radius: 6px;">
+                  <option value="">-- Filter by Status --</option>
+                  <option value="In Progress" <?= ($filterStatus === 'In Progress') ? 'selected' : ''; ?>>In Progress
+                  </option>
+                  <option value="Resolved" <?= ($filterStatus === 'Resolved') ? 'selected' : ''; ?>>Resolved</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-unigreen" style="padding: 6px 12px;">
+                  <i class="material-icons">search</i>
+                </button>
+              </form>
+            </div>
+            <!-- Dans le div avec style="display: flex; ..." -->
+            <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#statsModal">
+              <i class="material-icons">bar_chart</i> Statistics
+            </button>
 
 
-                            <?php break; ?>
-                          <?php endif; ?>
-                        <?php endforeach; ?>
+            <table>
+              <tr>
+                <th>Claim ID<?= renderSortIcons('id_reclamation', $sortColumn, $sortOrder); ?></th>
+                <th>Client ID</th>
+                <th>Category<?= renderSortIcons('Categorie', $sortColumn, $sortOrder); ?></th>
+                <th>Description<?= renderSortIcons('Description', $sortColumn, $sortOrder); ?></th>
+                <th>Status</th>
+                <th>Response</th>
+                <th>New Response</th>
+              </tr>
 
-                        <?php if (!$hasResponse): ?>
-                          <p style="color: red;">No Responses Yet</p>
-                        <?php endif; ?>
-                      </td>
+              <?php
+              $reclamationsAvecReponses = [];
 
-                      <td>
-                        <?php $isEditingThis = $editMode && $reponseToEdit && $reponseToEdit['id_reclamation'] == $rec['id_reclamation']; ?>
-                        <form action="<?= $isEditingThis ? 'edit2.php' : 'Add2.php' ?>" method="POST">
-                          <input type="hidden" name="id_reclamation" value="<?= $idRec ?>">
-                          <?php if ($isEditingThis): ?>
-                            <input type="hidden" name="id_reponse"
-                              value="<?= htmlspecialchars($reponseToEdit['id_reponse']); ?>">
-                          <?php endif; ?>
-                          <label for="Reponse">Your Response :</label>
-                          <textarea name="Reponse"
-                            required><?= $isEditingThis ? htmlspecialchars($reponseToEdit['Reponse']) : '' ?></textarea><br>
-                          <div class="d-flex justify-content-center mt-2">
-                            <button type="submit" class="btn btn-primary btn-sm px-3">
-                              <i class="material-icons">send</i> <?= $isEditingThis ? 'Edit' : 'Answer' ?>
-                            </button>
-                          </div>
-                        </form>
-                      </td>
-                    </tr>
+              foreach ($pagedReclamations as $rec):
 
-                    <?php if ($hasResponse):
-                      $reclamationsAvecReponses[] = $idRec;
-                    endif; ?>
-                  <?php endforeach; ?>
-                </table>
-                <?php foreach ($reclamationsAvecReponses as $idRec): ?>
-                  <div id="threadModal<?= $idRec ?>" class="modal fade modal-top" tabindex="-1">
+                $idRec = htmlspecialchars($rec['id_reclamation']);
+                $hasResponse = false;
+                ?>
+                <tr>
+                  <td><?= $idRec ?></td>
+                  <td><?= htmlspecialchars($rec['id_client']); ?></td>
+                  <td><?= htmlspecialchars($rec['Categorie']); ?></td>
+                  <td><?= htmlspecialchars($rec['Description']); ?></td>
+                  <td><?= htmlspecialchars($rec['Statut']); ?></td>
+                  <td>
+                    <?php foreach ($reponses as $rep): ?>
+                      <?php if ($rep['id_reclamation'] == $rec['id_reclamation']): ?>
+                        <?php $hasResponse = true; ?>
+                        <p><strong><?= htmlspecialchars($rep['Reponse']) ?></strong></p>
+                        <small><?= htmlspecialchars($rep['Date_reponse']) ?></small><br>
+                        <div class="button-container d-flex justify-content-start">
+                          <a href="claims.php?id_reponse=<?= $rep['id_reponse'] ?>" class="material-icons icon-link edit"
+                            title="Edit">edit</a>
+                          <a href="delete2.php?id_reponse=<?= $rep['id_reponse'] ?>" class="material-icons icon-link delete"
+                            title="Delete" onclick="return confirm('Do you want to delete your response ?');">delete</a>
+                          <button class="btn btn-info open-thread d-flex align-items-center justify-content-center"
+                            data-id="<?= $rec['id_reclamation'] ?>" data-bs-toggle="modal"
+                            data-bs-target="#threadModal<?= $rec['id_reclamation'] ?>"
+                            style="border-radius: 50%; width: 25px; height: 25px; padding: 0;">
+                            <i class="fas fa-comment-dots" style="font-size: 14px;"></i>
+                          </button>
 
-                    <div class="modal-dialog modal-dialog-scrollable modal-lg" style="margin-top: 50px;">
-
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title">Conversation</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body" id="threadContent<?= $idRec ?>">Chargement...</div>
-                        <div class="modal-footer">
-                          <form id="messageForm<?= $idRec ?>" class="messageForm" data-thread="<?= $idRec ?>">
-                            <input type="hidden" name="id_reclamation" value="<?= $idRec ?>">
-                            <textarea name="contenu" class="form-control" required></textarea>
-                            <button type="submit" class="btn btn-primary mt-2">Send</button>
-                          </form>
-                        </div>
+
+
+                        <?php ?>
+                      <?php endif; ?>
+                    <?php endforeach; ?>
+
+                    <?php if (!$hasResponse): ?>
+                      <p style="color: red;">No Responses Yet</p>
+                    <?php endif; ?>
+                  </td>
+
+                  <td>
+                    <?php $isEditingThis = $editMode && $reponseToEdit && $reponseToEdit['id_reclamation'] == $rec['id_reclamation']; ?>
+                    <form action="<?= $isEditingThis ? 'edit2.php' : 'Add2.php' ?>" method="POST">
+                      <input type="hidden" name="id_reclamation" value="<?= $idRec ?>">
+                      <?php if ($isEditingThis): ?>
+                        <input type="hidden" name="id_reponse"
+                          value="<?= htmlspecialchars($reponseToEdit['id_reponse']); ?>">
+                      <?php endif; ?>
+                      <label for="Reponse">Your Response :</label>
+                      <textarea name="Reponse"
+                        required><?= $isEditingThis ? htmlspecialchars($reponseToEdit['Reponse']) : '' ?></textarea><br>
+                      <div class="d-flex justify-content-center mt-2">
+                        <button type="submit" class="btn btn-unigreen btn-sm px-3">
+                          <i class="material-icons">send</i> <?= $isEditingThis ? 'Edit' : 'Answer' ?>
+                        </button>
                       </div>
+                    </form>
+                  </td>
+                </tr>
+
+                <?php if ($hasResponse):
+                  $reclamationsAvecReponses[] = $idRec;
+                endif; ?>
+              <?php endforeach; ?>
+            </table>
+            <!-- Pagination Controls -->
+            <div class="pagination d-flex justify-content-center mt-3">
+              <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <a class="mx-1 btn btn-sm <?= ($i == $currentPage) ? 'btn-primary' : 'btn-outline-secondary' ?>"
+                  href="?page=<?= $i ?>&sort=<?= urlencode($sortColumn) ?>&order=<?= urlencode($sortOrder) ?>&status_filter=<?= urlencode($filterStatus) ?>">
+                  <?= $i ?>
+                </a>
+              <?php endfor; ?>
+            </div>
+            <?php foreach ($reclamationsAvecReponses as $idRec): ?>
+              <div id="threadModal<?= $idRec ?>" class="modal fade modal-top" tabindex="-1">
+
+                <div class="modal-dialog modal-dialog-scrollable modal-lg" style="margin-top: 50px;">
+
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Conversation</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="threadContent<?= $idRec ?>">Chargement...</div>
+                    <div class="modal-footer">
+                      <form id="messageForm<?= $idRec ?>" class="messageForm" data-thread="<?= $idRec ?>">
+                        <input type="hidden" name="id_reclamation" value="<?= $idRec ?>">
+                        <textarea name="contenu" class="form-control" required></textarea>
+                        <button type="submit" class="btn btn-unigreen mt-2">Send</button>
+                      </form>
                     </div>
                   </div>
-                <?php endforeach; ?>
-
-
-
+                </div>
               </div>
-            </div>
+            <?php endforeach; ?>
+
+
+
           </div>
         </div>
       </div>
       <?php require_once '../includes/footer.php'; ?>
     </div>
   </div>
+  <!-- Modal Statistiques -->
+  <!-- Modal Statistiques (compact et stylisé) -->
+  <!-- Modal Statistiques (compact et stylisé) -->
+  <div class="modal fade" id="statsModal" tabindex="-1" aria-labelledby="statsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content shadow" style="border-radius: 15px;">
+        <div class="modal-header bg-primary text-white"
+          style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+          <h5 class="modal-title" id="statsModalLabel">
+            <i class="material-icons">insights</i> Claim Category Trends
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <canvas id="categoryChart" style="max-height: 300px;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const ctx = document.getElementById('categoryChart').getContext('2d');
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: <?= json_encode(array_keys($categoryStats)) ?>,
+          datasets: [{
+            label: 'Number of Claims',
+            data: <?= json_encode(array_values($categoryStats)) ?>,
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#007bff',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: '#007bff',
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  return ` ${context.label}: ${context.raw} claims`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 }
+            }
+          }
+        }
+      });
+    });
+  </script>
+
+
+
+
+
+
 
 
 
@@ -485,6 +450,7 @@ function renderSortIcons($column, $currentColumn, $currentOrder)
       });
     });
   </script>
+
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       // Gestion de l'ouverture de la modale
