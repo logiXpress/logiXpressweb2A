@@ -9,61 +9,81 @@ class EntretienC {
         $this->db = Config::getConnexion();
     }
 
-    public function getEntretienById($id) {
+    public function getEntretienById(int $id): ?array {
         $sql = "SELECT * FROM entretiens_vehicules WHERE id_entretien = :id";
         try {
             $query = $this->db->prepare($sql);
             $query->bindParam(':id', $id, PDO::PARAM_INT);
             $query->execute();
-            return $query->fetch(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+            return $query->fetch(PDO::FETCH_ASSOC) ?: null;
+        } catch (PDOException $e) {
             die('Erreur: ' . $e->getMessage());
         }
     }
 
-    public function ajouterEntretien($entretien) {
-        $sql = "INSERT INTO entretiens_vehicules (id_vehicule, Date, Type_intervention) 
-                VALUES (:id_vehicule, :date, :type_intervention)";
-        $req = $this->db->prepare($sql);
-        $req->bindValue(':id_vehicule', $entretien->getIdVehicule());
-        $req->bindValue(':date', $entretien->getDate());
-        $req->bindValue(':type_intervention', $entretien->getTypeIntervention());
-        $req->execute();
+    public function ajouterEntretien($entretien): void {
+        $sql = "INSERT INTO entretiens_vehicules (id_vehicule, Date, Type_intervention, statut) 
+                VALUES (:id_vehicule, :date, :type_intervention, :statut)";
+        try {
+            $this->db->beginTransaction();
+            $req = $this->db->prepare($sql);
+            $req->bindValue(':id_vehicule', $entretien->getIdVehicule());
+            $req->bindValue(':date', $entretien->getDate());
+            $req->bindValue(':type_intervention', $entretien->getTypeIntervention());
+            $req->bindValue(':statut', $entretien->getStatut());
+            $req->execute();
+            
+            $this->ajouterHistorique('add', $entretien->getIdVehicule(), $entretien->getTypeIntervention());
+            $this->db->commit();
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            die('Erreur: ' . $e->getMessage());
+        }
     }
 
-    public function modifierEntretien($id, $entretien) {
+    public function modifierEntretien(int $id, $entretien): void {
         $sql = "UPDATE entretiens_vehicules 
-                SET id_vehicule=:id_vehicule, Date=:date, Type_intervention=:type_intervention 
-                WHERE id_entretien=:id";
-        $req = $this->db->prepare($sql);
-        $req->bindValue(':id', $id);
-        $req->bindValue(':id_vehicule', $entretien->getIdVehicule());
-        $req->bindValue(':date', $entretien->getDate());
-        $req->bindValue(':type_intervention', $entretien->getTypeIntervention());
-        $req->execute();
+                SET id_vehicule = :id_vehicule, Date = :date, Type_intervention = :type_intervention, statut = :statut 
+                WHERE id_entretien = :id";
+        try {
+            $this->db->beginTransaction();
+            $req = $this->db->prepare($sql);
+            $req->bindValue(':id', $id);
+            $req->bindValue(':id_vehicule', $entretien->getIdVehicule());
+            $req->bindValue(':date', $entretien->getDate());
+            $req->bindValue(':type_intervention', $entretien->getTypeIntervention());
+            $req->bindValue(':statut', $entretien->getStatut());
+            $req->execute();
+            $this->db->commit();
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            die('Erreur: ' . $e->getMessage());
+        }
     }
 
-    public function supprimerEntretien($id) {
+    public function supprimerEntretien(int $id): void {
         $sql = "UPDATE entretiens_vehicules SET is_deleted = 1 WHERE id_entretien = :id";
-        $req = $this->db->prepare($sql);
-        $req->bindValue(':id', $id);
-        $req->execute();
+        try {
+            $req = $this->db->prepare($sql);
+            $req->bindValue(':id', $id);
+            $req->execute();
+        } catch (PDOException $e) {
+            die('Erreur: ' . $e->getMessage());
+        }
     }
 
-    public function listeEntretiens() {
+    public function listeEntretiens(): array {
         $sql = "SELECT * FROM entretiens_vehicules WHERE is_deleted = 0";
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function rechercherEntretienParId($searchId = '') {
-        $query = "SELECT * FROM entretiens_vehicules";
-        
+    public function rechercherEntretienParId(string $searchId = ''): array {
+        $query = "SELECT * FROM entretiens_vehicules WHERE is_deleted = 0";
         if (!empty($searchId)) {
-            $query .= " WHERE id_vehicule = :searchId";
+            $query .= " AND id_vehicule = :searchId";
         }
 
         $stmt = $this->db->prepare($query);
-
         if (!empty($searchId)) {
             $stmt->bindValue(':searchId', $searchId, PDO::PARAM_INT);
         }
@@ -72,106 +92,83 @@ class EntretienC {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function sortEntretiensByDate() {
+    public function sortEntretiensByDate(): array {
         $entretiens = $this->listeEntretiens(); 
         usort($entretiens, function($a, $b) {
-            return strtotime($a['Date']) - strtotime($b['Date']); 
+            return strtotime($b['Date']) - strtotime($a['Date']); // Tri décroissant par date
         });
         return $entretiens; 
     }
 
-    private function logAction($action, $vehiculeId, $details, $date = null) {
-        $stmt = $this->db->prepare("INSERT INTO historique (action, vehicule_id, details, date) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$action, $vehiculeId, $details, $date ?? date('Y-m-d H:i:s')]);
-    }
-
-    public function getHistorique() {
+    public function getHistorique(): array {
         $stmt = $this->db->prepare("SELECT * FROM historique ORDER BY date DESC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function ajouterHistorique($action, $vehiculeId, $typeIntervention) {
-        try {
-            $query = $this->db->prepare("INSERT INTO historique (action, vehicule_id, details, date) VALUES (:action, :vehicule_id, :details, NOW())");
-            $details = "Type intervention: " . $typeIntervention;
-            $query->execute([
-                'action' => $action,
-                'vehicule_id' => $vehiculeId,
-                'details' => $details
-            ]);
-        } catch (Exception $e) {
-            echo 'Erreur lors de l\'ajout à l\'historique: ' . $e->getMessage();
-        }
+    public function ajouterHistorique(string $action, int $vehicule_id, string $details): void {
+        $sql = "INSERT INTO historique (action, vehicule_id, date, details) VALUES (:action, :vehicule_id, NOW(), :details)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':action' => $action,
+            ':vehicule_id' => $vehicule_id,
+            ':details' => $details
+        ]);
     }
 
-    public function rechercherHistoriqueParIdVehicule($searchId = '') {
-        $query = "SELECT * FROM historique";
+    public function rechercherHistoriqueParIdVehicule($vehicule_id) {
+        $historique = [];
         
-        if (!empty($searchId)) {
-            $query .= " WHERE vehicule_id = :searchId";
+        try {
+            $sql = "SELECT * FROM entretiens_vehicules WHERE id_vehicule = :vehicule_id AND is_deleted = 0";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':vehicule_id', $vehicule_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $historique = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            // Log des erreurs pour débogage
+            error_log("Erreur lors de la récupération des données: " . $e->getMessage());
+            return []; // Retourner un tableau vide en cas d'erreur
         }
+        
+        return $historique;
+    }
 
-        $stmt = $this->db->prepare($query);
-
-        if (!empty($searchId)) {
-            $stmt->bindValue(':searchId', $searchId, PDO::PARAM_INT);
-        }
-
+    public function getHistoriqueSoumis() {
+        $sql = "SELECT vehicule_id FROM historique WHERE statut = 'soumis'";
+        $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getStatistiquesParIdVehicule($vehicule_id) {
-        $query = "SELECT action, date FROM historique WHERE vehicule_id = :vehicule_id";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(['vehicule_id' => $vehicule_id]);
-        $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $total = count($logs);
-        $ajouts = count(array_filter($logs, fn($log) => $log['action'] === 'add'));
-        $updates = count(array_filter($logs, fn($log) => $log['action'] === 'update'));
-        
-        return [
-            'total' => $total,
-            'ajouts' => $ajouts,
-            'updates' => $updates,
-        ];
+    public function getNombreEntretiensSoumisParVehicule(int $vehicule_id): int {
+        $sql = "SELECT COUNT(*) AS total FROM entretiens_vehicules WHERE id_vehicule = :id_vehicule AND statut = 'soumis' AND is_deleted = 0";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':id_vehicule', $vehicule_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
     }
 
-    public function getNombreEntretiensParVehicule() {
-        $sql = "SELECT vehicule_id, COUNT(*) AS nb FROM entretiens GROUP BY vehicule_id";
-        $db = config::getConnexion();
-        try {
-            $query = $db->prepare($sql);
-            $query->execute();
-            return $query->fetchAll();
-        } catch (PDOException $e) {
-            die('Erreur: ' . $e->getMessage());
-        }
+    public function getStatistiquesSoumisPourTousVehicules(): array {
+        $sql = "SELECT id_vehicule, COUNT(*) AS total 
+                FROM entretiens_vehicules 
+                WHERE statut = 'soumis' AND is_deleted = 0 
+                GROUP BY id_vehicule";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
-    public function getNombreEntretiensPourVehicule($vehicule_id) {
-        $sql = "SELECT COUNT(*) AS total FROM entretiens WHERE vehicule_id = :id";
-        $db = config::getConnexion();
-        try {
-            $query = $db->prepare($sql);
-            $query->bindParam(':id', $vehicule_id);
-            $query->execute();
-            return $query->fetch()['total'];
-        } catch (PDOException $e) {
-            die('Erreur: ' . $e->getMessage());
-        }
-    }
-    public function afficherEntretien() {
-        $sql = "SELECT * FROM entretiens_vehicules WHERE is_deleted = 0";
+
+    public function getEntretiensSoumis(): array {
+        $sql = "SELECT id_vehicule FROM entretiens_vehicules WHERE statut = 'soumis'"; 
         try {
             $query = $this->db->prepare($sql);
             $query->execute();
-            return $query->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            die('Erreur: ' . $e->getMessage());
+            return $query->fetchAll(PDO::FETCH_ASSOC); 
+        } catch (Exception $e) {
+            error_log('Erreur : ' . $e->getMessage()); 
+            return []; 
         }
     }
-    
 }
+?>

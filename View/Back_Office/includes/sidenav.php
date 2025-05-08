@@ -15,7 +15,7 @@
         </a>
       </li>
 
-      <!-- Delivery Management (Collapsible) -->
+      <!-- Forms (Collapsible) -->
       <?php
       $formPages = ['dashboard.php', 'ajouterlivraison.php', 'extended.html', 'validation.html', 'map.php', 'ListeLiv.php'];
       $isFormsActive = in_array(basename($_SERVER['PHP_SELF']), $formPages);
@@ -35,8 +35,8 @@
             </li>
             <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'ListeLiv.php') ? 'active' : ''; ?>">
               <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/livraison/ListeLiv.php">
-                <i class="material-icons">list</i>
-                <p>Liste Of Deliveries</p>
+                <i class="material-icons">liste</i>
+                <p>Liste Of Delivaries</p>
               </a>
             </li>
             <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'map.php') ? 'active' : ''; ?>">
@@ -45,11 +45,36 @@
                 <p>Deliveries Route</p>
               </a>
             </li>
+            <!-- More form links here -->
           </ul>
         </div>
       </li>
-
-      <!-- Vehicle Management (Collapsible) -->
+      <?php
+      $userPages = ['client_management.php', 'Couriers_Management.php'];
+      $isUserActive = in_array(basename($_SERVER['PHP_SELF']), $userPages);
+      ?>
+      <li class="nav-item <?= $isUserActive ? 'active' : ''; ?>">
+        <a class="nav-link" data-toggle="collapse" href="#userMenu" <?= $isUserActive ? 'aria-expanded="true"' : ''; ?>>
+          <i class="material-icons">group</i>
+          <p>User Management <b class="caret"></b></p>
+        </a>
+        <div class="collapse <?= $isUserActive ? 'show' : ''; ?>" id="userMenu">
+          <ul class="nav">
+            <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'client_management.php') ? 'active' : ''; ?>">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/user/client_management.php">
+                <i class="material-icons">person</i>
+                <p>Client Management</p>
+              </a>
+            </li>
+            <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'Couriers_Management.php') ? 'active' : ''; ?>">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/user/Couriers_Management.php">
+                <i class="material-icons">two_wheeler</i>
+                <p>Drivers Management</p>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
       <?php
       $vehiclePages = ['add.php', 'listevehicules.php'];
       $isVehicleActive = in_array(basename($_SERVER['PHP_SELF']), $vehiclePages);
@@ -72,36 +97,43 @@
                 <i class="material-icons">list</i>
                 <p>Liste of Vehicles</p>
               </a>
-            </li>
+
+
           </ul>
         </div>
       </li>
       <?php
-$maintenancePages = ['addE.php', 'listeentretiens.php'];
-$isMaintenanceActive = in_array(basename($_SERVER['PHP_SELF']), $maintenancePages);
-?>
-<li class="nav-item <?= $isMaintenanceActive ? 'active' : ''; ?>">
-    <a class="nav-link" data-toggle="collapse" href="#maintenanceMenu" <?= $isMaintenanceActive ? 'aria-expanded="true"' : ''; ?>>
-        <i class="material-icons">build</i>
-        <p>Maintenance Management <b class="caret"></b></p>
-    </a>
-    <div class="collapse <?= $isMaintenanceActive ? 'show' : ''; ?>" id="maintenanceMenu">
-        <ul class="nav">
+      $maintenancePages = ['addE.php', 'listeentretiens.php','sms.php'];
+      $isMaintenanceActive = in_array(basename($_SERVER['PHP_SELF']), $maintenancePages);
+      ?>
+      <li class="nav-item <?= $isMaintenanceActive ? 'active' : ''; ?>">
+        <a class="nav-link" data-toggle="collapse" href="#maintenanceMenu" <?= $isMaintenanceActive ? 'aria-expanded="true"' : ''; ?>>
+          <i class="material-icons">build</i>
+          <p>Maintenance Management <b class="caret"></b></p>
+        </a>
+        <div class="collapse <?= $isMaintenanceActive ? 'show' : ''; ?>" id="maintenanceMenu">
+          <ul class="nav">
             <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'addE.php') ? 'active' : ''; ?>">
-                <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/Entretien/addE.php">
-                    <i class="material-icons">add_circle</i>
-                    <p>Add a Maintenance</p>
-                </a>
+              <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/Entretien/addE.php">
+                <i class="material-icons">add_circle</i>
+                <p>Add a Maintenance</p>
+              </a>
             </li>
             <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'listeentretiens.php') ? 'active' : ''; ?>">
-                <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/entretien/listeentretiens.php">
-                    <i class="material-icons">list</i>
-                    <p>List of Maintenances</p>
-                </a>
+              <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/entretien/listeentretiens.php">
+                <i class="material-icons">list</i>
+                <p>List of Maintenances</p>
+              </a>
             </li>
-        </ul>
-    </div>
-</li>
+            <li class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'sms.php') ? 'active' : ''; ?>">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>/View/Back_Office/sms/sms.php">
+                <i class="material-icons">sms</i>
+                <p>SMS</p>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
 
     </ul>
   </div>
