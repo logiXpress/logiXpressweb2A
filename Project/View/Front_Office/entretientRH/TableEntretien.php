@@ -126,7 +126,13 @@ $tab = $entretienC->listeEntretien(); // Fetch interview data
                           <!--        Here you can write extra buttons/actions for the toolbar              -->
                         </div>
                   <div class="material-datatables">
-                  
+                  <div style="display: flex; justify-content: flex-end;">
+  <button onclick="exportInterviewsPDF()" class="btn open-moda btn-success">
+    <i class="material-icons">picture_as_pdf</i>
+  </button>
+</div>
+
+
                     <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
                       <thead>
                         <tr>
@@ -139,7 +145,7 @@ $tab = $entretienC->listeEntretien(); // Fetch interview data
                       <th><h6 style="text-align: center;">Email</h6></th>
                       <th><h6 style="text-align: center;padding-right: 20px;">Telephone</h6></th>
                       
-                          <th class="disabled-sorting text-right"></th>
+                          <th ><h6 style="text-align: center;padding-right: 20px;">Actions</h6></th>
                         </tr>
                       </thead>
                       <tfoot>
@@ -155,7 +161,7 @@ $tab = $entretienC->listeEntretien(); // Fetch interview data
                       <th>Email</th>
                       <th>Telephone</th>
                       
-                          <th class="text-right"></th>
+                          <th class="text-center">Action</th>
                         </tr>
                       </tfoot>
                       <tbody>
@@ -188,18 +194,19 @@ for ($i = 0; $i < count($tab); $i++) {
     echo "<td>" . (isset($tab[$i]["telephone"]) ? $tab[$i]["telephone"] : '') . "</td>";
 
     echo "<td class='text-right'>
+    <form action='conSupprimerEntretien.php' method='post' style='display: inline;'>
+            <input type='hidden' name='idEntretien' value='" . (isset($tab[$i]["id_entretien"]) ? $tab[$i]["id_entretien"] : '') . "'>
+            <button type='submit' class='btn btn-danger mr-2 ' style='margin-right: 5px;'>
+                <i class='material-icons'>delete</i>
+            </button>
+        </form>
         <form action='forumModifierEntretient.php' method='post' style='display: inline;'>
             <input type='hidden' name='idEntretien' value='" . (isset($tab[$i]["id_entretien"]) ? $tab[$i]["id_entretien"] : '') . "'>
             <button type='submit' class='btn btn-warning open-modal'>
-                <i class='material-icons'>edit</i>Edit
+                <i class='material-icons'>edit</i>
             </button>
         </form>
-        <form action='conSupprimerEntretien.php' method='post' style='display: inline;'>
-            <input type='hidden' name='idEntretien' value='" . (isset($tab[$i]["id_entretien"]) ? $tab[$i]["id_entretien"] : '') . "'>
-            <button type='submit' class='btn btn-danger mr-2 '>
-                <i class='material-icons'>delete</i>Delete
-            </button>
-        </form>
+        
     </td>";
     echo "</tr>";
 }
@@ -208,7 +215,7 @@ for ($i = 0; $i < count($tab); $i++) {
                      
                       </tbody>
                     </table>
-                    <br><button onclick="exportInterviewsPDF()" class="btn btn-round btn-info">Export PDF</button>
+                    <br>
                   </div>
                 </div>
                 <!-- end content-->

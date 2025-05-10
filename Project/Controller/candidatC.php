@@ -1,6 +1,7 @@
 <?php
 require_once 'config.php';
-require_once '../../../vendor/autoload.php';  // Adjust path as needed
+require_once '../../../Model/candidat.php';
+require_once '../../../vendor/autoload.php';  
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -20,7 +21,7 @@ class candidatC
     $conn = config::getConnexion();
     $requette = $conn->prepare("INSERT INTO CANDIDATS (nom, prenom, email, telephone, CV, Date_Candidature) VALUES (:nom, :prenom, :email, :telephone, :CV, :Date_Candidature)");
 
-    // Bind the input parameters to prevent SQL injection
+    
     $requette->bindParam(":nom", $nom);
     $requette->bindParam(":prenom", $prenom);
     $requette->bindParam(":email", $email);
@@ -29,11 +30,11 @@ class candidatC
     $requette->bindParam(":Date_Candidature", $dateCandidature);
 
     try {
-        // Execute the SQL query
+        
         if ($requette->execute()) {
             echo "Record inserted successfully.";
 
-            // Send welcome email
+            
             $this->sendWelcomeEmail($email, $nom);
         } else {
             echo "Failed to insert record.";
@@ -46,22 +47,27 @@ class candidatC
 public function sendWelcomeEmail($email, $name)
 {
     $mail = new PHPMailer(true);
+    $mail->SMTPDebug = 2;
     try {
         $mail->isSMTP();
-        $mail->Host = 'smtp.office365.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'messaoudiAsmaa@outlook.com'; // your Outlook/Office365 email
-        $mail->Password = 'jifidagrgklluqyz';     // Use your app password here
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+            $mail->Host       = 'smtp.gmail.com';
+$mail->SMTPAuth   = true;
+$mail->Username   = 'messaoudiasma60@gmail.com'; 
+$mail->Password   = 'foyu admn gjhq wzys'; 
+$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+$mail->Port       = 587;
 
-        $mail->setFrom('messaoudiAsmaa@outlook.com', 'Your Name or Company');
-        $mail->addAddress($email, $name);
+           
+            $mail->setFrom('messaoudiasma60@gmail.com', 'Logixpress HR');
+            $mail->addAddress($email, "$prenom $nom");
         $mail->isHTML(true);
-        $mail->Subject = 'Welcome to Our Service';
-        $mail->Body    = 'Dear ' . $name . ',<br><br>Welcome! Your application has been successfully received. We will contact you soon with interview details.';
-
-        $mail->send();
+            $mail->Subject = 'Welcome to Logixpress!';
+            $mail->Body = "
+                <p>Dear $prenom $nom,</p>
+                <p>Thank you for applying to Logixpress. We have received your application.</p>
+                <p>If selected, you'll receive interview details soon.</p>
+                <br><p>Best regards,<br>Logixpress HR Team</p>
+            ";
         echo 'Confirmation email sent.';
     } catch (Exception $e) {
         echo "Email could not be sent. Mailer Error: {$mail->ErrorInfo}";
@@ -119,6 +125,7 @@ public function sendWelcomeEmail($email, $name)
         return $requette->fetchColumn(); 
     }
 
+    
     public function ChercherTelephoneCandidat($telephone)
     {
         $conn = config::getConnexion();
@@ -127,6 +134,7 @@ public function sendWelcomeEmail($email, $name)
         $requette->execute();
         return $requette->fetchColumn();
     }
+
 
     public function ChercherIDCandidatByEmail($email,$telephone)
     {
@@ -137,6 +145,7 @@ public function sendWelcomeEmail($email, $name)
         $requette->execute();
         return $requette->fetchColumn();
     }
+
 
     public function ChercherCandidatByID($id)
 {

@@ -6,20 +6,19 @@ async function exportPDF() {
       format: 'a4'
     });
   
-    // Set font for professional look
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
   
     // Header
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(46, 204, 113); // Green color matching theme
+    doc.setTextColor(46, 204, 113); 
     doc.text('Candidate List', 20, 20);
     
-    // Optional: Placeholder for logo (uncomment and add image if available)
-    // doc.addImage('path/to/logo.png', 'PNG', 160, 10, 30, 20);
+    
     doc.addImage('../../../Public/assets/img/logo.png', 'PNG', 160, 15, 40, 10);
-    // Subheader
+    
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 100, 100);
@@ -36,15 +35,15 @@ async function exportPDF() {
       return cells.map(td => td.innerText.trim());
     });
   
-    // Table styling
+    
     doc.autoTable({
       head: head,
       body: body,
       startY: 35,
       theme: 'striped',
       headStyles: {
-        fillColor: [46, 204, 113], // Green header
-        textColor: [255, 255, 255], // White text
+        fillColor: [46, 204, 113], 
+        textColor: [255, 255, 255], 
         fontSize: 9,
         fontStyle: 'bold'
       },
@@ -53,7 +52,7 @@ async function exportPDF() {
         textColor: [50, 50, 50]
       },
       alternateRowStyles: {
-        fillColor: [240, 240, 240] // Light gray for alternate rows
+        fillColor: [240, 240, 240] 
       },
       margin: { top: 35, left: 20, right: 20, bottom: 20 },
       styles: {
@@ -76,7 +75,7 @@ async function exportPDF() {
       );
     }
   
-    // Save the PDF
+    
     doc.save('candidates.pdf');
   }
 
@@ -90,20 +89,20 @@ async function exportPDF() {
       format: 'a4'
     });
   
-    // Set font for professional look
+    
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
   
     // Header
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(46, 204, 113); // Green color matching theme
+    doc.setTextColor(46, 204, 113); 
     doc.text('Interview List', 20, 20);
     
-    // Add logo
+    
     doc.addImage('../../../Public/assets/img/logo.png', 'PNG', 240, 15, 40, 10);
   
-    // Subheader
+    
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 100, 100);
@@ -111,14 +110,14 @@ async function exportPDF() {
   
     // Table data
     const table = document.querySelector('#datatables');
-    const headers = Array.from(table.querySelectorAll('thead th')).slice(0, -1); // Exclude last column (Actions)
+    const headers = Array.from(table.querySelectorAll('thead th')).slice(0, -1); 
     const rows = Array.from(table.querySelectorAll('tbody tr'));
   
-    const head = [headers.map(th => th.innerText.trim().replace('\n', ' '))]; // Clean up header text
+    const head = [headers.map(th => th.innerText.trim().replace('\n', ' '))]; 
     const body = rows.map(tr => {
-      const cells = Array.from(tr.querySelectorAll('td')).slice(0, -1); // Exclude last column
+      const cells = Array.from(tr.querySelectorAll('td')).slice(0, -1); 
       return cells.map(td => {
-        // Extract text from badge for Status column (index 1)
+        
         if (td.querySelector('.badge')) {
           return td.querySelector('.badge').innerText.trim();
         }
@@ -133,8 +132,8 @@ async function exportPDF() {
       startY: 35,
       theme: 'striped',
       headStyles: {
-        fillColor: [46, 204, 113], // Green header
-        textColor: [255, 255, 255], // White text
+        fillColor: [46, 204, 113], 
+        textColor: [255, 255, 255], 
         fontSize: 9,
         fontStyle: 'bold'
       },
@@ -143,7 +142,7 @@ async function exportPDF() {
         textColor: [50, 50, 50]
       },
       alternateRowStyles: {
-        fillColor: [240, 240, 240] // Light gray for alternate rows
+        fillColor: [240, 240, 240]
       },
       margin: { top: 35, left: 20, right: 20, bottom: 20 },
       styles: {
@@ -152,7 +151,7 @@ async function exportPDF() {
       }
     });
   
-    // Footer
+    
     const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
@@ -166,6 +165,6 @@ async function exportPDF() {
       );
     }
   
-    // Save the PDF
+    
     doc.save('interviews.pdf');
   }

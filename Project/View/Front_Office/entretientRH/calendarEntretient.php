@@ -24,7 +24,7 @@
 require "../../../controller/entretienC.php";
 $entretienC = new entretienC();
 
-// Function to fetch initial interview data
+
 function fetchInterviews($entretienC) {
     $tab = $entretienC->listeEntretien();
     $interviews = [];
@@ -39,7 +39,16 @@ function fetchInterviews($entretienC) {
     return $interviews;
 }
 
-// Function to get upcoming interviews
+
+
+
+//----------------------------------------next event--------------------------
+
+
+
+
+
+
 function getUpcomingInterviews($entretienC, $limit = 5) {
     $tab = $entretienC->listeEntretien();
     $upcomingInterviews = [];
@@ -52,15 +61,14 @@ function getUpcomingInterviews($entretienC, $limit = 5) {
         }
     }
 
-    // Sort by date and limit the results
     usort($upcomingInterviews, function($a, $b) {
         return strtotime($a['date_entretien']) - strtotime($b['date_entretien']);
     });
 
-    return array_slice($upcomingInterviews, 0, $limit); // Return limited number of upcoming interviews
+    return array_slice($upcomingInterviews, 0, $limit); 
 }
 
-// Function to count interviews by status
+
 function countInterviewsByStatus($entretienC) {
   $tab = $entretienC->listeEntretien();
   $statusCounts = [
@@ -82,22 +90,19 @@ function countInterviewsByStatus($entretienC) {
 
 
 
-// Fetch initial interviews
+
 $initialInterviews = fetchInterviews($entretienC);
 
-// Fetch upcoming interviews
 $upcomingInterviews = getUpcomingInterviews($entretienC);
 
-// Fetch status counts
 $statusCounts = countInterviewsByStatus($entretienC);
 $totalInterviews = array_sum($statusCounts);
 
-// Calculate percentages
 $planifiePercent = $totalInterviews > 0 ? round(($statusCounts['planifié'] / $totalInterviews) * 100) : 0;
 $effectuePercent = $totalInterviews > 0 ? round(($statusCounts['effectué'] / $totalInterviews) * 100) : 0;
 $annulePercent = $totalInterviews > 0 ? round(($statusCounts['annulé'] / $totalInterviews) * 100) : 0;
 
-// Log percentages for debugging
+
 error_log("Total Interviews: $totalInterviews");
 error_log("Percentages - Planifié: $planifiePercent, Effectué: $effectuePercent, Annulé: $annulePercent");
 
@@ -134,7 +139,7 @@ error_log("Percentages - Planifié: $planifiePercent, Effectué: $effectuePercen
         </div>
     </div>
 
-    <!-- Next Events Column -->
+    <!-- --------------------------------Next Events--------------------->
 <div class="col-lg-3 col-md-12">
     <div class="card next-events-card">
         <div class="card-header card-header-unigreen card-header-icon">
@@ -216,8 +221,15 @@ error_log("Percentages - Planifié: $planifiePercent, Effectué: $effectuePercen
   <script src="../../../assets/js/material-dashboard.min6c54.js?v=2.2.2" type="text/javascript"></script>
   <!-- Material Dashboard DEMO methods, don't include it in your project! -->
   
-  <!-- FullCalendar JS -->
+  
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+
+
+
+
+
+
+
 <!-- Initialize FullCalendar -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -246,22 +258,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script src="../../../Public/assets/js/plugins/chartist.min.js"></script>
 
+
+
+
+
+
+
+<!-----------------------------------stat----------------------------------------->
 <script>
-// Initialize Pie Chart with dynamic data
+
 $(document).ready(function() {
     var planifiePercent = <?php echo $planifiePercent; ?>;
     
     var annulePercent = <?php echo $annulePercent; ?>;
     var effectuePercent = <?php echo $effectuePercent; ?>;
 
-    // If all percentages are 0, show a placeholder chart
+    
     if (planifiePercent === 0  && annulePercent === 0 && effectuePercent === 0) {
         var dataPreferences = {
             labels: ['No Data'],
-            series: [100] // Single segment for placeholder
+            series: [100] 
         };
     } else {
-        // Build labels and series, excluding 0% values
+       
         var labels = [];
         var series = [];
 
@@ -291,7 +310,7 @@ $(document).ready(function() {
             if (value === 'No Data') {
                 return 'No Data';
             }
-            return value; // Display the full label (e.g., "Planifié 25%")
+            return value;
         }
     };
 
@@ -299,7 +318,8 @@ $(document).ready(function() {
 });
 </script>
   
-  
+  <!-----------------------------------end----------------------------------------->
+
   
   <script>
     $(document).ready(function() {
@@ -485,12 +505,12 @@ $(document).ready(function() {
             }, 300);
           }
 
-          // we simulate the window Resize so the charts will get updated in realtime.
+
           var simulateWindowResize = setInterval(function() {
             window.dispatchEvent(new Event('resize'));
           }, 180);
 
-          // we stop the simulation of Window Resize after the animations are completed
+          
           setTimeout(function() {
             clearInterval(simulateWindowResize);
           }, 1000);
@@ -556,7 +576,7 @@ $(document).ready(function() {
       });
 
 
-      // Facebook Pixel Code Don't Delete
+      
       ! function(f, b, e, v, n, t, s) {
         if (f.fbq) return;
         n = f.fbq = function() {
@@ -587,7 +607,7 @@ $(document).ready(function() {
     });
   </script>
   <script>
-    // Facebook Pixel Code Don't Delete
+    
     ! function(f, b, e, v, n, t, s) {
       if (f.fbq) return;
       n = f.fbq = function() {
@@ -620,7 +640,7 @@ $(document).ready(function() {
   </noscript>
   <script>
 $(document).ready(function() {
-    // Check if DataTable is already initialized
+    
     if (!$.fn.DataTable.isDataTable('#datatables')) {
         $('#datatables').DataTable({
             "pagingType": "full_numbers",
@@ -647,7 +667,7 @@ $(document).ready(function() {
             }]
         });
 
-        // Add custom styling to the search box
+        
         $('.dataTables_filter input').addClass('form-control');
         $('.dataTables_length select').addClass('form-control');
     }

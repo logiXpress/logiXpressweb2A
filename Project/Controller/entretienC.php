@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once '../../../Model/entretien.php';
 require 'candidatC.php';
 class entretienC
 {
@@ -21,8 +22,8 @@ class entretienC
     $requette = $conn->prepare("INSERT INTO ENTRETIENS_RH (id_candidat, date_entretien, Statut, lien_entretien, evaluation) VALUES (:id_candidat, :date_entretien, :statut, :lien_entretien, :evaluation)");
     
     $requette->bindParam(":id_candidat", $id_candidat, PDO::PARAM_INT);
-    $requette->bindParam(":date_entretien", $Date_Entretien); // Fixed placeholder name
-    $requette->bindParam(":statut", $Statut); // Consistent with :statut in query
+    $requette->bindParam(":date_entretien", $Date_Entretien); 
+    $requette->bindParam(":statut", $Statut); 
     $requette->bindParam(":lien_entretien", $lien_entretien);
     $requette->bindParam(":evaluation", $evaluation);
 

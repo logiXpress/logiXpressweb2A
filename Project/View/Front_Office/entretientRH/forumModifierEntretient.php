@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require "../../../controller/entretienC.php";  // Changed backslashes to forward slashes
+require "../../../controller/entretienC.php";  
 $id = '';
 
 $id = isset($_POST['idEntretien']) ? htmlspecialchars($_POST['idEntretien']) : '';
@@ -14,16 +14,16 @@ if (isset($tab) && !empty($tab)) {
   $lien_entretien = isset($tab[0]['lien_entretien']) ? htmlspecialchars($tab[0]['lien_entretien']) : '';
   $evaluation = isset($tab[0]['evaluation']) ? htmlspecialchars($tab[0]['evaluation']) : '';
   if (!empty($date_entretien)) {
-    // Format properly for HTML datetime-local input
+    
     $date_entretien = date('Y-m-d\TH:i', strtotime(str_replace('/', '-', $date_entretien)));
 } else {
-    $date_entretien = ''; // Empty if no date
+    $date_entretien = ''; 
 }
 
 
 } else {
   echo "No Entretien data available.";
-  // Optionally set default values
+  
   $date_entretien = $statut = $lien_entretien = $evaluation = '';
 }
 ?>
@@ -37,24 +37,24 @@ if (isset($tab) && !empty($tab)) {
     display: flex;
     align-items: center;
     background-color: #2ecc71;
-    /* Unigreen color */
+    
     color: white;
     padding: 15px;
     border-radius: 10px;
-    /* Rounded edges for the header */
+    
     position: absolute;
     top: -35px;
     left: 2px;
     width: calc(100% - 10px);
-    /* To fit with the card width */
+    
   }
 
   .icon {
     background: #2ecc71;
-    /* Unigreen color */
+    
     color: white;
     border-radius: 5px;
-    /* Now it's rectangular */
+    
     padding: 20px;
     margin-right: 10px;
     margin-bottom: 15px;
@@ -169,7 +169,7 @@ if (isset($tab) && !empty($tab)) {
   <script>
     $(document).ready(function() {
         $('.datetimepicker').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm' // Adjust format as needed
+            format: 'YYYY-MM-DD HH:mm' 
         });
     });
   </script>

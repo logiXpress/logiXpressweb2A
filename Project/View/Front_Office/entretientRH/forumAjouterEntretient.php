@@ -10,7 +10,7 @@ if (!isset($_POST['idCandidat']) || empty($_POST['idCandidat'])) {
 
 $id = htmlspecialchars($_POST['idCandidat']);
 
-// Optionally, validate idCandidat format (e.g., if it's a number)
+
 if (!is_numeric($id)) {
     header("Location: tableCandidat.php?error=invalid_id");
     exit();

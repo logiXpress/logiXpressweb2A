@@ -15,7 +15,7 @@
 
 <?php
 
-require "../../../controller/candidatC.php"; // Changed backslashes to forward slashes
+require "../../../controller/candidatC.php"; 
 $candidatC= new CandidatC();
 $tab=$candidatC->listeCandidat();
 
@@ -28,6 +28,83 @@ $tab=$candidatC->listeCandidat();
 <?php require_once '../includes/header.php'; ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
+  body {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  table.dataTable {
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  table.dataTable thead {
+    background-color: #2ecc71;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  table.dataTable tbody td {
+    vertical-align: middle;
+    padding: 12px 10px;
+  }
+
+  table.dataTable tbody tr:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+  }
+
+  .btn-sm i {
+    margin-right: 5px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    background-color: #2ecc71;
+    /* Unigreen color */
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    /* Rounded edges for the header */
+    position: absolute;
+    top: -35px;
+    left: 2px;
+    width: calc(100% - 10px);
+    /* To fit with the card width */
+  }
+
+  .icon {
+    background: #2ecc71;
+    /* Unigreen color */
+    color: white;
+    border-radius: 5px;
+    /* Now it's rectangular */
+    padding: 20px;
+    margin-right: 10px;
+    margin-bottom: 15px;
+  }
+
+  .card {
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    margin-bottom: 30px;
+  }
+
+  .form-label {
+    font-weight: 600;
+  }
+
+  .btn-primary {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+  }
+
+  .btn-primary:hover {
+    background-color: #27ae60;
+    border-color: #27ae60;
+  }
+
   body {
     font-family: 'Poppins', sans-serif;
   }
@@ -73,15 +150,19 @@ $tab=$candidatC->listeCandidat();
                   <div class="card-icon">
                     <i class="material-icons">assignment</i>
                   </div>
-                  <h4 class="card-title">List of Candidates</h4>
+                  
                 </div>
                 <!-- ... keep the header part the same until the card-body div ... -->
 <div class="card-body">
     <div class="toolbar">
-        <!--        Here you can write extra buttons/actions for the toolbar              -->
+    <h4 class="card-title">List of Candidates</h4>
     </div>
     <div class="material-datatables">
-    
+    <div style="display: flex; justify-content: flex-end;">
+  <button onclick="exportPDF()" class="btn open-moda btn-success">
+    <i class="material-icons">picture_as_pdf</i>
+  </button>
+</div>
         <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
             <thead>
                 <tr>
@@ -103,19 +184,19 @@ $tab=$candidatC->listeCandidat();
                     echo "<td>" . htmlspecialchars($candidat["email"]) . "</td>";
                     echo "<td>" . htmlspecialchars($candidat["telephone"]) . "</td>";
                     echo "<td>" . htmlspecialchars($candidat["Date_Candidature"]) . "</td>";
-                    echo "<td class='text-right'>";
+                    echo "<td class='text-center'>";
                     
                     // View CV Button
                     $cvPath = !empty($candidat["CV"]) ? $uploadDir . htmlspecialchars($candidat["CV"]) : '#';
-                    echo "<a href='" . $cvPath . "' target='_blank' class='btn btn-info btn-round' style='margin-right:5px;'" . (empty($candidat["CV"]) ? ' disabled' : '') . ">
-                            Check CV
+                    echo "<a href='" . $cvPath . "' target='_blank' class='btn btn-info ' style='margin-right:5px;'" . (empty($candidat["CV"]) ? ' disabled' : '') . ">
+                            <i class='material-icons'>visibility</i>
                           </a>";
                     
                     // Schedule Button
                     echo "<form action='forumAjouterEntretient.php' method='post' style='display:inline;'>
                             <input type='hidden' name='idCandidat' value='" . htmlspecialchars($candidat["id_candidat"]) . "'>
-                            <button type='submit' class='btn btn-success btn-round'>
-                                <i class='material-icons'></i>schedule
+                            <button type='submit' class='btn btn-success '>
+                                <i class='material-icons'>event_available</i>
                             </button>
                           </form>";
                     
@@ -124,7 +205,7 @@ $tab=$candidatC->listeCandidat();
                 ?>
             </tbody>
         </table>
-        <br><button onclick="exportPDF()" class="btn btn-round btn-info">Export PDF</button>
+        <br>
     </div>
 </div>
                 <!-- end content-->
@@ -176,7 +257,7 @@ $tab=$candidatC->listeCandidat();
         }
 
         $('.fixed-plugin a').click(function(event) {
-          // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
+
           if ($(this).hasClass('switch-trigger')) {
             if (event.stopPropagation) {
               event.stopPropagation();
@@ -506,7 +587,6 @@ $(document).ready(function() {
 });
 </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"926215487d4a5bca","version":"2025.3.0","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"token":"1b7cbb72744b40c580f8633c6b62637e","b":1}' crossorigin="anonymous"></script>
-
 <script>
     if (document.getElementById('TableEntretien')) {
       const dataTableSearch = new simpleDatatables.DataTable("#TableEntretien", {
@@ -533,8 +613,7 @@ $(document).ready(function() {
       });
     };
   </script>
-
-  <script>
+<script>
     if (document.getElementById('TableEntretien')) {
       const dataTableSearch = new simpleDatatables.DataTable("#TableEntretien", {
         searchable: true,

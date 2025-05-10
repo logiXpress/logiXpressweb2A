@@ -3,19 +3,19 @@
 
   <head>
   <style>
-  /* Ensure the input background is white and text is black */
+  
   #datetime {
     background-color: white;
     color: black;
   }
 
-  /* Optional: Remove Flatpickr's calendar icon or adjust styling */
+  
   .flatpickr-input {
-    background-color: white !important;  /* Enforce white background */
-    color: black !important;  /* Enforce black text */
+    background-color: white !important; 
+    color: black !important;
   }
 
-  /* Optional: Style the calendar popup for better appearance */
+  
   .flatpickr-calendar {
     background-color: #fff;
     border: 1px solid #ccc;
@@ -36,8 +36,6 @@
     <link rel="stylesheet" href="../../../Public/assets/css/fontawesome.css">
     <link rel="stylesheet" href="../../../Public/assets/css/style.css">
     <link rel="stylesheet" href="../../../Public/assets/css/owl.css">
-
-    
   </head>
 
   <body>
@@ -134,34 +132,33 @@
     <div class="services">
       
         <div class="callback-form">
-          <div class="container">
-            <div class="row">
-             <div class="col-md-12">
-               <div class="section-heading">
-                  <h2>Request to <em>Join us</em></h2>
-                  <span>Fill This Form</span>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="contact-form">
-                <form action="conAjouterCandidat.php" method="POST" onsubmit="return validee()" enctype="multipart/form-data">
-
-                    <div class="row">
-                      <div class="col-lg-6">
-                        <fieldset>
-                          <input  type="text" name="nom" id="nom"  class="form-control" placeholder="Last Name" />
-                        </fieldset>
-                      </div>
-                      <div class="col-lg-6">
-                        <fieldset>
-                          <input class="form-control" type="text" name="prenom" id="prenom" placeholder="Name"/>
-                        </fieldset>
-                      </div>
-                      <div class="col-lg-6 col-md-12 col-sm-12">
-                        <fieldset>
-                          <input type="text" name="email" id="email" class="form-control" placeholder="Email"/>
-                        </fieldset>
-                      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="section-heading">
+              <h2>Request to <em>Join us</em></h2>
+              <span>Fill This Form</span>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="contact-form">
+              <form id="contact" action="conAjouterCandidat.php" method="POST" enctype="multipart/form-data">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <fieldset>
+                      <input  type="text" name="nom" id="nom"  class="form-control" placeholder="Last Name" />
+                    </fieldset>
+                  </div>
+                  <div class="col-lg-6">
+                    <fieldset>
+                      <input class="form-control" type="text" name="prenom" id="prenom" placeholder="Name"/>
+                    </fieldset>
+                  </div>
+                  <div class="col-lg-6 col-md-12 col-sm-12">
+                    <fieldset>
+                      <input type="text" name="email" id="email" class="form-control" placeholder="Email"/>
+                    </fieldset>
+                  </div>
 
                   
                   <div class="col-lg-6">
@@ -186,7 +183,7 @@
     <input type="file" name="CV" id="CV" accept=".pdf" style="display: none;" />
 
     <!-- Upload button -->
-    <button type="button" id="upload-btn" class="border-button">Upload Your CV</button>
+    <button type="button" id="form-submit" class="border-button">Upload Your CV</button>
 
     <!-- File info section -->
     <div id="file-info" style="margin-top: 10px; display: none;">
@@ -201,21 +198,29 @@
                   
                   <div class="col-lg-12">
                     <fieldset>
-                    <button type="submit" id="submit-btn" class="border-button">Submit</button>
+                      <button type="submit" id="form-submit" class="border-button">Submit</button>
                     </fieldset>
                   </div>
                 </div>
               </form>
             </div>
           </div>
-        </div> 
+        </div>
+         
+
+          
+
+         
+
+          
+
+          
         </div>
 
         <br>
         <br>
 
        
-       <br>
 
         <br>
         <br>
@@ -223,14 +228,12 @@
         <br>
       </div>
     </div>
-  </div>
-</div>
 
     <!-- Footer Starts Here -->
     <footer>
       <div class="container">
         <div class="row">
-          <div class="col-md-2 footer-item">
+          <div class="col-md-3 footer-item">
             <h4>LogiXpress</h4>
             <p>Vivamus tellus mi. Nulla ne cursus elit,vulputate. Sed ne cursus augue hasellus lacinia sapien vitae.</p>
             <ul class="social-icons">
@@ -314,7 +317,6 @@
     <script src="../../../Public/assets/js/owl.js"></script>
     <script src="../../../Public/assets/js/slick.js"></script>
     <script src="../../../Public/assets/js/accordions.js"></script>
-    
 
     <script language = "text/Javascript"> 
       cleared[0] = cleared[1] = cleared[2] = 0; //set a cleared flag for each field
@@ -329,7 +331,7 @@
 
 <script>
   const fileInput = document.getElementById('CV');
-  const uploadBtn = document.getElementById('upload-btn');
+  const uploadBtn = document.getElementById('form-submit');
   const fileInfo = document.getElementById('file-info');
   const fileNameDisplay = document.getElementById('file-name');
   const viewBtn = document.getElementById('view-btn');
@@ -371,10 +373,9 @@
 <script>
   flatpickr("#datetime", {
     enableTime: true,
-    dateFormat: "Y/m/d H:i",  // yyyy/mm/dd HH:MM
+    dateFormat: "YYYY/mmm/dd H:i",  // yyyy/mm/dd HH:MM
     time_24hr: true           // Use 24-hour time
   });
 </script>
-<script src="../../../Public/assets/js/formValidation.js"></script>
   </body>
 </html>
