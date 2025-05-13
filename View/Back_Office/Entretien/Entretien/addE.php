@@ -183,7 +183,7 @@ img {
                     <div class="card" style="width: 100%; max-width: 900px;">
                         <div class="card-header">
                             <div class="add-icon">
-                            <i class="material-icons">handyman</i>
+                                <i class="fas fa-plus"></i> 
                             </div>
                             <h3 class="card-title mb-0">Add A Maintenance</h3>
                         </div>

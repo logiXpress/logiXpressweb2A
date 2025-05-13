@@ -9,7 +9,9 @@ class VehiculeC {
     public function __construct() {
         $this->db = Config::getConnexion();
     }
-
+    public function getDbConnection() {
+        return $this->db;
+    }
     public function getVehiculeById(string $id_vehicule) {
         $sql = "SELECT * FROM vehicules WHERE id_vehicule = :id_vehicule";
         $query = $this->db->prepare($sql);
@@ -18,17 +20,17 @@ class VehiculeC {
         return $query->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function listeVehicules() {
-        $sql = "SELECT * FROM vehicules";
+    public function listeVehicules($column = 'id_vehicule', $order = 'ASC') {
+        $sql = "SELECT * FROM vehicules ORDER BY $column $order";
         try {
-            $stmt = $this->db->query($sql);
+            $stmt = $this->db->prepare($sql); // Utilisez $this->db ici
+            $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             echo "Erreur lors de la récupération des véhicules : " . $e->getMessage();
             return [];
         }
     }
-
     public function ajouterVehicule($vehicule) {
         $checkQuery = $this->db->prepare("SELECT COUNT(*) FROM vehicules WHERE Immatriculation = :immatriculation");
         $checkQuery->bindValue(':immatriculation', $vehicule->getImmatriculation());

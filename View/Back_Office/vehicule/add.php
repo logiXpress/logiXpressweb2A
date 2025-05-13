@@ -149,7 +149,7 @@ img {
                     <div class="card" style="width: 100%; max-width: 900px;">
                         <div class="card-header">
                             <div class="add-icon">
-                                <i class="fas fa-plus"></i>
+                            <i class="material-icons">directions_car</i>
                             </div>
                             <h3 class="card-title mb-0">Add A Vehicle</h3>
                         </div>
@@ -259,24 +259,6 @@ img {
                 e.preventDefault();
             }
         });
-        function validateType() {
-        const typeInput = document.getElementById('type').value.trim();
-        const regexType = /^[a-zA-Z\s]*$/;
-
-        if (!regexType.test(typeInput)) {
-            document.getElementById('typeError').textContent = 'Veuillez entrer des caractères uniquement.';
-            return false;
-        }
-
-        document.getElementById('typeError').textContent = '';
-        return true;
-    }
-
-    document.querySelector('form').addEventListener('submit', function(e) {
-        if (!validateForm() || !validateType()) {
-            e.preventDefault(); // Prevent form submission
-        }
-    });
     </script>
 </body>
 
